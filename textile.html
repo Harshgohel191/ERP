@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Textile V12 - Ledger Fixed</title>
+    <style>
+        :root { --primary: #0f766e; --bg: #f8fafc; --white: #ffffff; --red: #dc2626; --green: #16a34a; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
+        
+        .nav { background: var(--white); padding: 15px; border-radius: 12px; display: flex; gap: 10px; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .nav h2 { margin: 0 20px 0 0; color: var(--primary); }
+        .tab-btn { background: none; border: none; padding: 10px 20px; font-weight: 600; color: #64748b; cursor: pointer; border-radius: 8px; transition: 0.2s; }
+        .tab-btn.active { background: var(--primary); color: white; }
+
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(5px)} to{opacity:1; transform:translateY(0)} }
+
+        .card { background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px; }
+        .stat-box { background: white; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .stat-box .val { font-size: 24px; font-weight: bold; color: #333; }
+
+        .input-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .input-group { flex: 1; }
+        label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; color: #64748b; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+        
+        .styled-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        .styled-table th { background: #f1f5f9; text-align: left; padding: 12px; border-bottom: 2px solid #e2e8f0; }
+        .styled-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+        
+        /* ITEM LIST STYLE - The Highlight */
+        .item-row { font-size: 13px; color: #444; border-bottom: 1px dashed #eee; padding: 2px 0; }
+        .item-row span { font-weight: bold; color: var(--primary); }
+
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; }
+        .btn-add { background: #e0f2fe; color: #0284c7; width: 100%; margin-top: 10px; border: 1px dashed #0284c7; }
+        .btn-save { background: var(--primary); padding: 10px 25px; }
+        .btn-pay { background: #3b82f6; }
+
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 100; }
+        .modal { background: white; padding: 30px; border-radius: 12px; width: 400px; box-shadow: 0 20px 25px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+
+
+
+    <div class="nav">
+        <a href="/" style="text-decoration:none; color:#666; font-weight:bold;">← Home</a>
+        <h2>🧵 Textile V12</h2>
+        <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+        <button class="tab-btn" onclick="switchTab('entry')">🛒 Purchase</button>
+        <button class="tab-btn" onclick="switchTab('sale')">💰 Selling</button>
+        <button class="tab-btn" onclick="switchTab('expense')">💸 Expenses</button>
+        <button class="tab-btn" onclick="switchTab('ledger')">📜 Ledger (Khata)</button>
+    </div>
+
+
+    <div id="dashboard" class="section active">
+
+        <div class="stats-grid">
+            <div class="stat-box" style="border-color: green;"><h3>Cash in Hand</h3><div class="val" id="dCash">₹0</div></div>
+            <div class="stat-box"><h3>Total Purchase</h3><div class="val" id="dPurch">₹0</div></div>
+            <div class="stat-box"><h3>Total Sales</h3><div class="val" id="dSales">₹0</div></div>
+            <div class="stat-box"><h3>Total Expenses</h3><div class="val" id="dExpenses">₹0</div></div>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-box"><h3>Gross Profit</h3><div class="val" id="dGrossProfit">₹0</div></div>
+            <div class="stat-box" style="border-color: orange;"><h3>Net Profit</h3><div class="val" id="dNetProfit">₹0</div></div>
+            <div class="stat-box"><h3>Total Paid</h3><div class="val" id="dPaid">₹0</div></div>
+            <div class="stat-box" style="border-color: red;"><h3>Pending (Udhar)</h3><div class="val" id="dPayable">₹0</div></div>
+        </div>
+    </div>
+
+
+
+    <div id="entry" class="section">
+        <div class="card">
+            <h3>New Purchase Entry</h3>
+            <div class="input-row">
+                <div class="input-group"><label>Vendor Name</label><input type="text" id="pVendor" placeholder="e.g. Radhe Tex"></div>
+                <div class="input-group"><label>Bill No</label><input type="text" id="pBillNo" placeholder="Bill #"></div>
+                <div class="input-group"><label>Bill Date</label><input type="date" id="pDate"></div>
+                <div class="input-group"><label>Credit Days</label><input type="number" id="pCredit" value="30"></div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label><input type="checkbox" id="pGst" onchange="togglePurchaseGst()"> Add GST</label>
+                    <select id="pGstRate" style="display:none; margin-top:5px;">
+                        <option value="5">5%</option>
+                        <option value="12">12%</option>
+                        <option value="18" selected>18%</option>
+                        <option value="28">28%</option>
+                    </select>
+                </div>
+            </div>
+
+            <table class="styled-table" id="itemTable">
+                <thead><tr><th width="40%">Item Name</th><th>Qty</th><th>Rate</th><th>Total</th><th></th></tr></thead>
+                <tbody></tbody>
+            </table>
+            <button class="btn btn-add" onclick="addItemRow()">+ Add Item</button>
+
+            <div style="text-align:right; margin-top:20px;">
+                <div style="margin-bottom:10px;">
+                    <div>Subtotal: ₹<span id="purchaseSubtotal">0</span></div>
+                    <div id="purchaseGstDisplay" style="display:none;">GST: ₹<span id="purchaseGst">0</span></div>
+                    <h3>Total: ₹<span id="grandTotal">0</span></h3>
+                </div>
+                <button class="btn btn-save" onclick="saveBill()">SAVE TO LEDGER</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sale" class="section">
+        <div class="card">
+            <h3>New Sale Entry</h3>
+            <div class="input-row">
+                <div class="input-group"><label>Customer Name</label><input type="text" id="sCustomer" placeholder="e.g. Rajesh Kumar"></div>
+                <div class="input-group"><label>Invoice No</label><input type="text" id="sInvoiceNo" placeholder="INV #"></div>
+                <div class="input-group"><label>Sale Date</label><input type="date" id="sDate"></div>
+                <div class="input-group">
+                    <label><input type="checkbox" id="sGst" onchange="toggleGst()"> Add GST</label>
+                    <select id="sGstRate" style="display:none; margin-top:5px;">
+                        <option value="5">5%</option>
+                        <option value="12">12%</option>
+                        <option value="18" selected>18%</option>
+                        <option value="28">28%</option>
+                    </select>
+                </div>
+            </div>
+
+            <table class="styled-table" id="saleItemTable">
+                <thead><tr><th width="40%">Item Name</th><th>Qty</th><th>Rate</th><th>Total</th><th></th></tr></thead>
+                <tbody></tbody>
+            </table>
+            <button class="btn btn-add" onclick="addSaleItemRow()">+ Add Item</button>
+
+            <div style="text-align:right; margin-top:20px;">
+                <div style="margin-bottom:10px;">
+                    <div>Subtotal: ₹<span id="saleSubtotal">0</span></div>
+                    <div id="gstDisplay" style="display:none;">GST: ₹<span id="saleGst">0</span></div>
+                    <h3>Total: ₹<span id="saleTotal">0</span></h3>
+                </div>
+                <button class="btn btn-save" onclick="saveSale()">SAVE SALE</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="expense" class="section">
+        <div class="card">
+            <h3>New Expense Entry</h3>
+            <div class="input-row">
+                <div class="input-group"><label>Expense Category</label>
+                    <select id="eCategory">
+                        <option value="">Select Category</option>
+                        <option value="Rent">Rent</option>
+                        <option value="Electricity">Electricity</option>
+                        <option value="Water">Water</option>
+                        <option value="Salary">Salary</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Advertising">Advertising</option>
+                        <option value="Insurance">Insurance</option>
+                        <option value="Tax">Tax</option>
+                        <option value="Office Supplies">Office Supplies</option>
+                        <option value="Communication">Communication</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="input-group"><label>Description</label><input type="text" id="eDescription" placeholder="e.g. Monthly shop rent"></div>
+                <div class="input-group"><label>Amount</label><input type="number" id="eAmount" placeholder="0" oninput="calcExpense()"></div>
+                <div class="input-group"><label>Date</label><input type="date" id="eDate"></div>
+                <div class="input-group"><label>Payment Mode</label>
+                    <select id="eMode">
+                        <option>Cash</option>
+                        <option>Bank</option>
+                        <option>UPI</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="text-align:right; margin-top:20px;">
+                <h3>Total Expense: ₹<span id="eTotal">0</span></h3>
+                <button class="btn btn-save" onclick="saveExpense()">SAVE EXPENSE</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ledger" class="section">
+        <div class="card">
+            <h3>Complete Ledger (Purchases & Sales)</h3>
+
+            <div style="margin-bottom: 20px;">
+                <button class="tab-btn" onclick="switchLedgerView('purchase')" id="purchaseViewBtn" style="background: var(--primary); color: white;">Purchases</button>
+                <button class="tab-btn" onclick="switchLedgerView('sales')" id="salesViewBtn">Sales</button>
+                <button class="tab-btn" onclick="switchLedgerView('expense')" id="expenseViewBtn">Expenses</button>
+                <button class="tab-btn" onclick="switchLedgerView('all')" id="allViewBtn">All Entries</button>
+            </div>
+            
+            <div id="purchaseLedger">
+                <h4>Purchase Entries</h4>
+                <table class="styled-table">
+                    <thead><tr><th>Date / Bill</th><th>Vendor</th><th>Items Details (Qty x Rate)</th><th>Total</th><th>Paid</th><th>Balance</th><th>Action</th></tr></thead>
+                    <tbody id="purchaseLedgerBody"></tbody>
+                </table>
+            </div>
+            
+
+            <div id="salesLedger" style="display:none;">
+                <h4>Sales Entries</h4>
+                <table class="styled-table">
+                    <thead><tr><th>Date / Invoice</th><th>Customer</th><th>Items Details (Qty x Rate)</th><th>Subtotal</th><th>GST</th><th>Total</th><th>Status</th></tr></thead>
+                    <tbody id="salesLedgerBody"></tbody>
+                </table>
+            </div>
+            
+
+            <div id="expenseLedger" style="display:none;">
+                <h4>Expense Entries</h4>
+                <table class="styled-table">
+                    <thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Payment Mode</th><th>Action</th></tr></thead>
+                    <tbody id="expenseLedgerBody"></tbody>
+                </table>
+            </div>
+            
+            <div id="allLedger" style="display:none;">
+                <h4>All Entries</h4>
+                <table class="styled-table">
+                    <thead><tr><th>Date</th><th>Type</th><th>Party</th><th>Details</th><th>Amount</th><th>Balance</th></tr></thead>
+                    <tbody id="allLedgerBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="payModal" class="modal-overlay">
+        <div class="modal">
+            <h3>Make Payment</h3>
+            <p>Bill: <b id="mBillNo"></b></p>
+            <div style="background:#f1f5f9; padding:10px; margin-bottom:15px; display:flex; justify-content:space-between;">
+                <span>Pending: <b id="mOldBal">0</b></span>
+                <span style="color:green">New: <b id="mNewBal">...</b></span>
+            </div>
+            <input type="hidden" id="mBillId">
+            <div class="input-group" style="margin-bottom:10px;"><label>Pay Amount</label><input type="number" id="mAmt" placeholder="0" oninput="updateCalc()"></div>
+            <div class="input-group" style="margin-bottom:10px;"><label>Discount</label><input type="number" id="mDisc" placeholder="0" oninput="updateCalc()"></div>
+            <div class="input-group" style="margin-bottom:15px;"><label>Date</label><input type="date" id="mDate"></div>
+            <div class="input-group" style="margin-bottom:15px;"><label>Mode</label><select id="mMode"><option>Bank</option><option>Cash</option></select></div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn" style="background:#ccc; color:black; flex:1;" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-pay" style="flex:1;" onclick="submitPayment()">Confirm Pay</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // INIT
+        document.querySelectorAll('input[type=date]').forEach(i => i.valueAsDate = new Date());
+        addItemRow(); 
+        addSaleItemRow();
+        loadData();
+
+
+        function switchTab(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
+            if(id === 'ledger' || id === 'dashboard') loadData();
+        }
+
+        // --- SELLING FUNCTIONS ---
+        function addSaleItemRow() {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" class="sItemName" placeholder="Item Name" onchange="checkSalePrice(this)"></td>
+                <td><input type="number" class="sItemQty" placeholder="0" oninput="calcSaleRow(this)"></td>
+                <td><input type="number" class="sItemRate" placeholder="0" oninput="calcSaleRow(this)"></td>
+                <td><input type="number" class="sItemTotal" readonly style="background:#eee; border:none;"></td>
+                <td><button onclick="this.closest('tr').remove();calcSaleTotal()" style="color:red;border:none;background:none;font-weight:bold;cursor:pointer;">✖</button></td>
+            `;
+            document.querySelector('#saleItemTable tbody').appendChild(tr);
+        }
+
+        async function checkSalePrice(input) {
+            if(!input.value) return;
+            const res = await fetch('/api/textile/check-price', { 
+                method:'POST', headers:{'Content-Type':'application/json'}, 
+                body: JSON.stringify({ itemName: input.value }) 
+            });
+            const data = await res.json();
+            if(data.lastPrice > 0) {
+                const row = input.closest('tr');
+                if(!row.querySelector('.sItemRate').value) {
+                    row.querySelector('.sItemRate').value = data.lastPrice;
+                    calcSaleRow(input);
+                }
+            }
+        }
+
+        function calcSaleRow(el) {
+            const row = el.closest('tr');
+            const qty = parseFloat(row.querySelector('.sItemQty').value) || 0;
+            const rate = parseFloat(row.querySelector('.sItemRate').value) || 0;
+            row.querySelector('.sItemTotal').value = qty * rate;
+            calcSaleTotal();
+        }
+
+        function calcSaleTotal() {
+            let subtotal = 0; 
+            document.querySelectorAll('.sItemTotal').forEach(i => subtotal += parseFloat(i.value || 0));
+            
+            document.getElementById('saleSubtotal').innerText = subtotal;
+            
+            // GST calculation
+            const gstCheck = document.getElementById('sGst').checked;
+            const gstRate = parseFloat(document.getElementById('sGstRate').value) || 0;
+            
+            if(gstCheck) {
+                const gstAmount = (subtotal * gstRate) / 100;
+                document.getElementById('saleGst').innerText = gstAmount.toFixed(2);
+                document.getElementById('saleTotal').innerText = (subtotal + gstAmount).toFixed(2);
+                document.getElementById('gstDisplay').style.display = 'block';
+            } else {
+                document.getElementById('saleTotal').innerText = subtotal.toFixed(2);
+                document.getElementById('gstDisplay').style.display = 'none';
+            }
+        }
+
+        function toggleGst() {
+            const gstCheck = document.getElementById('sGst').checked;
+            const gstRateSelect = document.getElementById('sGstRate');
+            gstRateSelect.style.display = gstCheck ? 'block' : 'none';
+            calcSaleTotal();
+        }
+
+        async function saveSale() {
+            const items = [];
+            document.querySelectorAll('#saleItemTable tbody tr').forEach(r => {
+                const name = r.querySelector('.sItemName').value;
+                const qty = r.querySelector('.sItemQty').value;
+                const rate = r.querySelector('.sItemRate').value;
+                const total = r.querySelector('.sItemTotal').value;
+                if(name && qty) items.push({ name, qty, rate, total });
+            });
+
+            if(items.length === 0) return alert("Add items first!");
+
+            const gstCheck = document.getElementById('sGst').checked;
+            const gstRate = parseFloat(document.getElementById('sGstRate').value) || 0;
+            const subtotal = parseFloat(document.getElementById('saleSubtotal').innerText) || 0;
+            const gstAmount = gstCheck ? (subtotal * gstRate) / 100 : 0;
+            const totalAmount = parseFloat(document.getElementById('saleTotal').innerText) || 0;
+
+            const body = {
+                customer: document.getElementById('sCustomer').value,
+                invoiceNo: document.getElementById('sInvoiceNo').value,
+                saleDate: document.getElementById('sDate').value,
+                items,
+                subtotal,
+                gstIncluded: gstCheck,
+                gstRate,
+                gstAmount,
+                totalAmount
+            };
+
+            await fetch('/api/textile/sale/save', { 
+                method:'POST', 
+                headers:{'Content-Type':'application/json'}, 
+                body: JSON.stringify(body)
+            });
+            
+
+            alert("✅ Sale saved successfully!");
+            switchTab('ledger'); // Auto switch to ledger
+        }
+
+        // --- EXPENSE FUNCTIONS ---
+        function calcExpense() {
+            const amount = parseFloat(document.getElementById('eAmount').value) || 0;
+            document.getElementById('eTotal').innerText = amount;
+        }
+
+        async function saveExpense() {
+            const category = document.getElementById('eCategory').value;
+            const description = document.getElementById('eDescription').value;
+            const amount = parseFloat(document.getElementById('eAmount').value) || 0;
+            const date = document.getElementById('eDate').value;
+            const mode = document.getElementById('eMode').value;
+
+            if(!category || !description || amount <= 0) {
+                alert("Please fill all required fields!");
+                return;
+            }
+
+            const body = {
+                category,
+                description,
+                amount,
+                date,
+                mode
+            };
+
+            await fetch('/api/textile/expense/save', { 
+                method:'POST', 
+                headers:{'Content-Type':'application/json'}, 
+                body: JSON.stringify(body)
+            });
+            
+            alert("✅ Expense saved successfully!");
+            
+            // Clear form
+            document.getElementById('eCategory').value = '';
+            document.getElementById('eDescription').value = '';
+            document.getElementById('eAmount').value = '';
+            document.getElementById('eTotal').innerText = '0';
+            
+            switchTab('ledger'); // Auto switch to ledger
+        }
+
+
+        // --- LOAD DATA (UPDATED FOR SALES) ---
+        async function loadData() {
+            try {
+
+
+                // Stats
+                const stats = await (await fetch('/api/textile/stats')).json();
+                document.getElementById('dCash').innerText = `₹${stats.cash.toLocaleString()}`;
+                document.getElementById('dPurch').innerText = `₹${stats.purchase.toLocaleString()}`;
+                document.getElementById('dSales').innerText = `₹${stats.sales.toLocaleString()}`;
+                document.getElementById('dExpenses').innerText = `₹${stats.expenses.toLocaleString()}`;
+                document.getElementById('dGrossProfit').innerText = `₹${stats.grossProfit.toLocaleString()}`;
+                document.getElementById('dNetProfit').innerText = `₹${stats.netProfit.toLocaleString()}`;
+                document.getElementById('dPaid').innerText = `₹${stats.paid.toLocaleString()}`;
+                document.getElementById('dPayable').innerText = `₹${stats.payable.toLocaleString()}`;
+                
+                // Color coding for profit/loss
+                const grossProfitElement = document.getElementById('dGrossProfit');
+                const netProfitElement = document.getElementById('dNetProfit');
+                
+                if(stats.grossProfit >= 0) {
+                    grossProfitElement.style.color = '#16a34a'; // Green for profit
+                } else {
+                    grossProfitElement.style.color = '#dc2626'; // Red for loss
+                }
+                
+                if(stats.netProfit >= 0) {
+                    netProfitElement.style.color = '#16a34a'; // Green for profit
+                } else {
+                    netProfitElement.style.color = '#dc2626'; // Red for loss
+                }
+
+
+                // Load complete data
+                const data = await (await fetch('/api/textile/data')).json();
+                
+                // Load Purchase Ledger
+                loadPurchaseLedger(data.bills || []);
+                
+                // Load Sales Ledger
+                loadSalesLedger(data.sales || []);
+                
+                // Load Expense Ledger
+                loadExpenseLedger(data.expenses || []);
+                
+                // Load All Entries
+                loadAllEntries(data.bills || [], data.sales || [], data.expenses || []);
+                
+            } catch (err) { console.error(err); }
+        }
+
+        function loadPurchaseLedger(bills) {
+            const tbody = document.getElementById('purchaseLedgerBody');
+            tbody.innerHTML = '';
+
+            if(bills.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No Purchase Entries Found.</td></tr>';
+                return;
+            }
+
+            bills.sort((a,b) => new Date(b.id) - new Date(a.id)).forEach(b => {
+                const date = new Date(b.billDate).toLocaleDateString();
+                
+                let itemsHtml = '';
+                if (Array.isArray(b.items)) {
+                    itemsHtml = b.items.map(i => 
+                        `<div class="item-row"><span>${i.name}</span>: ${i.qty} x ${i.rate} = ₹${i.total}</div>`
+                    ).join('');
+                } else {
+                    itemsHtml = '<small style="color:red">No Details</small>';
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${date}<br><small style="color:gray">#${b.billNo}</small></td>
+                        <td><b>${b.vendor}</b></td>
+                        <td>${itemsHtml}</td>
+                        <td><b>₹${b.totalAmount}</b></td>
+                        <td style="color:green">₹${b.paidAmount} <small>(+${b.discountAmount} Disc)</small></td>
+                        <td style="color:red; font-weight:bold;">₹${b.balance}</td>
+                        <td>
+                            ${b.status !== 'Paid' ? `<button class="btn btn-pay" style="padding:5px 10px; font-size:12px; margin-right:5px;" onclick='openPay(${JSON.stringify(b)})'>Pay</button>` : '✅'}
+                            <button class="btn" style="padding:5px 10px; font-size:12px; background:#dc2626;" onclick='deleteBill(${JSON.stringify(b)})'>Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+
+        function loadSalesLedger(sales) {
+            const tbody = document.getElementById('salesLedgerBody');
+            tbody.innerHTML = '';
+
+            if(sales.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No Sales Entries Found.</td></tr>';
+                return;
+            }
+
+            sales.sort((a,b) => new Date(b.id) - new Date(a.id)).forEach(s => {
+                const date = new Date(s.saleDate).toLocaleDateString();
+                
+                let itemsHtml = '';
+                if (Array.isArray(s.items)) {
+                    itemsHtml = s.items.map(i => 
+                        `<div class="item-row"><span>${i.name}</span>: ${i.qty} x ${i.rate} = ₹${i.total}</div>`
+                    ).join('');
+                } else {
+                    itemsHtml = '<small style="color:red">No Details</small>';
+                }
+
+                const gstDisplay = s.gstIncluded ? 
+                    `<div>Rate: ${s.gstRate}%<br>Amount: ₹${s.gstAmount}</div>` : 
+                    '<small style="color:gray;">No GST</small>';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${date}<br><small style="color:gray">#${s.invoiceNo}</small></td>
+                        <td><b>${s.customer}</b></td>
+                        <td>${itemsHtml}</td>
+                        <td><b>₹${s.subtotal}</b></td>
+                        <td>${gstDisplay}</td>
+                        <td style="color:green; font-weight:bold;">₹${s.totalAmount}</td>
+                        <td><span style="color:green;">✅ ${s.paymentStatus}</span></td>
+                        <td><button class="btn" style="padding:5px 10px; font-size:12px; background:#dc2626;" onclick='deleteSale(${JSON.stringify(s)})'>Delete</button></td>
+                    </tr>
+                `;
+
+            });
+        }
+
+
+        function loadExpenseLedger(expenses) {
+            const tbody = document.getElementById('expenseLedgerBody');
+            tbody.innerHTML = '';
+
+            if(expenses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No Expense Entries Found.</td></tr>';
+                return;
+            }
+
+            expenses.sort((a,b) => new Date(b.id) - new Date(a.id)).forEach(e => {
+                const date = new Date(e.date).toLocaleDateString();
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${date}</td>
+                        <td><span style="background:#fef3c7; padding:2px 6px; border-radius:4px; font-size:11px;">${e.category}</span></td>
+                        <td>${e.description}</td>
+                        <td style="color:red; font-weight:bold;">₹${e.amount}</td>
+                        <td>${e.mode}</td>
+                        <td><button class="btn" style="padding:5px 10px; font-size:12px; background:#dc2626;" onclick='deleteExpense(${JSON.stringify(e)})'>Delete</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+
+        function loadAllEntries(bills, sales, expenses) {
+            const tbody = document.getElementById('allLedgerBody');
+            tbody.innerHTML = '';
+
+            let allEntries = [];
+            
+            // Add purchase entries
+            bills.forEach(b => {
+                allEntries.push({
+                    date: b.billDate,
+                    type: 'Purchase',
+                    party: b.vendor,
+                    details: `Bill #${b.billNo}`,
+                    amount: -b.totalAmount, // Negative for purchase
+                    balance: b.balance
+                });
+            });
+
+            // Add sales entries
+            sales.forEach(s => {
+                allEntries.push({
+                    date: s.saleDate,
+                    type: 'Sale',
+                    party: s.customer,
+                    details: `Invoice #${s.invoiceNo}`,
+                    amount: s.totalAmount, // Positive for sale
+                    balance: 0
+                });
+            });
+
+            // Add expense entries
+            expenses.forEach(e => {
+                allEntries.push({
+                    date: e.date,
+                    type: 'Expense',
+                    party: e.category,
+                    details: e.description,
+                    amount: -e.amount, // Negative for expense
+                    balance: 0
+                });
+            });
+
+            if(allEntries.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No Entries Found.</td></tr>';
+                return;
+            }
+
+            // Sort by date (newest first)
+            allEntries.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            allEntries.forEach(entry => {
+                const date = new Date(entry.date).toLocaleDateString();
+                let bgColor = '#fee2e2'; // Red for purchases and expenses
+                if (entry.type === 'Sale') {
+                    bgColor = '#dcfce7'; // Green for sales
+                } else if (entry.type === 'Expense') {
+                    bgColor = '#fef3c7'; // Yellow for expenses
+                }
+                
+                const amountColor = entry.amount >= 0 ? 'green' : 'red';
+                const amountSign = entry.amount >= 0 ? '+' : '';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${date}</td>
+                        <td><span style="background:${bgColor}; padding:2px 6px; border-radius:4px; font-size:11px;">${entry.type}</span></td>
+                        <td><b>${entry.party}</b></td>
+                        <td>${entry.details}</td>
+                        <td style="color:${amountColor}; font-weight:bold;">${amountSign}₹${Math.abs(entry.amount)}</td>
+                        <td>${entry.balance > 0 ? `₹${entry.balance}` : '-'}</td>
+                    </tr>
+                `;
+            });
+        }
+
+
+        function switchLedgerView(view) {
+            // Hide all views
+            document.getElementById('purchaseLedger').style.display = 'none';
+            document.getElementById('salesLedger').style.display = 'none';
+            document.getElementById('expenseLedger').style.display = 'none';
+            document.getElementById('allLedger').style.display = 'none';
+            
+            // Reset button styles
+            document.getElementById('purchaseViewBtn').style.background = '';
+            document.getElementById('purchaseViewBtn').style.color = '';
+            document.getElementById('salesViewBtn').style.background = '';
+            document.getElementById('salesViewBtn').style.color = '';
+            document.getElementById('expenseViewBtn').style.background = '';
+            document.getElementById('expenseViewBtn').style.color = '';
+            document.getElementById('allViewBtn').style.background = '';
+            document.getElementById('allViewBtn').style.color = '';
+            
+            // Show selected view and highlight button
+            if(view === 'purchase') {
+                document.getElementById('purchaseLedger').style.display = 'block';
+                document.getElementById('purchaseViewBtn').style.background = 'var(--primary)';
+                document.getElementById('purchaseViewBtn').style.color = 'white';
+            } else if(view === 'sales') {
+                document.getElementById('salesLedger').style.display = 'block';
+                document.getElementById('salesViewBtn').style.background = 'var(--primary)';
+                document.getElementById('salesViewBtn').style.color = 'white';
+            } else if(view === 'expense') {
+                document.getElementById('expenseLedger').style.display = 'block';
+                document.getElementById('expenseViewBtn').style.background = 'var(--primary)';
+                document.getElementById('expenseViewBtn').style.color = 'white';
+            } else if(view === 'all') {
+                document.getElementById('allLedger').style.display = 'block';
+                document.getElementById('allViewBtn').style.background = 'var(--primary)';
+                document.getElementById('allViewBtn').style.color = 'white';
+            }
+        }
+
+        // --- SMART ENTRY ---
+        function addItemRow() {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="text" class="iName" placeholder="Item Name" onchange="checkPrice(this)"></td>
+                <td><input type="number" class="iQty" placeholder="0" oninput="calcRow(this)"></td>
+                <td><input type="number" class="iRate" placeholder="0" oninput="calcRow(this)"></td>
+                <td><input type="number" class="iTot" readonly style="background:#eee; border:none;"></td>
+                <td><button onclick="this.closest('tr').remove();calcTotal()" style="color:red;border:none;background:none;font-weight:bold;cursor:pointer;">✖</button></td>
+            `;
+            document.querySelector('#itemTable tbody').appendChild(tr);
+        }
+
+        async function checkPrice(input) {
+            if(!input.value) return;
+            const res = await fetch('/api/textile/check-price', { 
+                method:'POST', headers:{'Content-Type':'application/json'}, 
+                body: JSON.stringify({ itemName: input.value }) 
+            });
+            const data = await res.json();
+            if(data.lastPrice > 0) {
+                const row = input.closest('tr');
+                if(!row.querySelector('.iRate').value) {
+                    row.querySelector('.iRate').value = data.lastPrice;
+                    calcRow(input);
+                }
+            }
+        }
+
+
+        function calcRow(el) {
+            const row = el.closest('tr');
+            const qty = parseFloat(row.querySelector('.iQty').value) || 0;
+            const rate = parseFloat(row.querySelector('.iRate').value) || 0;
+            row.querySelector('.iTot').value = qty * rate;
+            calcPurchaseTotal();
+        }
+
+        function calcPurchaseTotal() {
+            let subtotal = 0; 
+            document.querySelectorAll('.iTot').forEach(i => subtotal += parseFloat(i.value || 0));
+            
+            document.getElementById('purchaseSubtotal').innerText = subtotal;
+            
+            // GST calculation
+            const gstCheck = document.getElementById('pGst').checked;
+            const gstRate = parseFloat(document.getElementById('pGstRate').value) || 0;
+            
+            if(gstCheck) {
+                const gstAmount = (subtotal * gstRate) / 100;
+                document.getElementById('purchaseGst').innerText = gstAmount.toFixed(2);
+                document.getElementById('grandTotal').innerText = (subtotal + gstAmount).toFixed(2);
+                document.getElementById('purchaseGstDisplay').style.display = 'block';
+            } else {
+                document.getElementById('grandTotal').innerText = subtotal.toFixed(2);
+                document.getElementById('purchaseGstDisplay').style.display = 'none';
+            }
+        }
+
+        function togglePurchaseGst() {
+            const gstCheck = document.getElementById('pGst').checked;
+            const gstRateSelect = document.getElementById('pGstRate');
+            gstRateSelect.style.display = gstCheck ? 'block' : 'none';
+            calcPurchaseTotal();
+        }
+
+
+        async function saveBill() {
+            const items = [];
+            document.querySelectorAll('#itemTable tbody tr').forEach(r => {
+                const name = r.querySelector('.iName').value;
+                const qty = r.querySelector('.iQty').value;
+                const rate = r.querySelector('.iRate').value;
+                const total = r.querySelector('.iTot').value;
+                if(name && qty) items.push({ name, qty, rate, total });
+            });
+
+            if(items.length === 0) return alert("Add items first!");
+
+            // Calculate GST
+            const subtotal = parseFloat(document.getElementById('purchaseSubtotal').innerText) || 0;
+            const gstCheck = document.getElementById('pGst').checked;
+            const gstRate = parseFloat(document.getElementById('pGstRate').value) || 0;
+            const gstAmount = gstCheck ? (subtotal * gstRate) / 100 : 0;
+            const totalAmount = parseFloat(document.getElementById('grandTotal').innerText) || 0;
+
+            const body = {
+                vendor: document.getElementById('pVendor').value,
+                billNo: document.getElementById('pBillNo').value,
+                billDate: document.getElementById('pDate').value,
+                creditDays: document.getElementById('pCredit').value,
+                items,
+                subtotal,
+                gstIncluded: gstCheck,
+                gstRate,
+                gstAmount,
+                totalAmount
+            };
+
+            await fetch('/api/textile/purchase/save', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+            alert("✅ Saved!");
+            switchTab('ledger'); // Auto switch
+        }
+
+        // --- PAYMENT ---
+        let selectedBill = null;
+        function openPay(bill) {
+            selectedBill = bill;
+            document.getElementById('payModal').style.display = 'flex';
+            document.getElementById('mBillId').value = bill.id;
+            document.getElementById('mBillNo').innerText = bill.billNo;
+            document.getElementById('mOldBal').innerText = `₹${bill.balance}`;
+            document.getElementById('mAmt').value = '';
+            document.getElementById('mDisc').value = '';
+            document.getElementById('mNewBal').innerText = `₹${bill.balance}`;
+        }
+
+        function updateCalc() {
+            if(!selectedBill) return;
+            const pay = parseFloat(document.getElementById('mAmt').value) || 0;
+            const disc = parseFloat(document.getElementById('mDisc').value) || 0;
+            let newBal = selectedBill.balance - (pay + disc);
+            if(newBal < 0) newBal = 0;
+            document.getElementById('mNewBal').innerText = `₹${newBal}`;
+        }
+
+        function closeModal() { document.getElementById('payModal').style.display = 'none'; }
+
+
+        async function submitPayment() {
+            await fetch('/api/textile/pay', {
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    billId: document.getElementById('mBillId').value,
+                    payAmount: document.getElementById('mAmt').value,
+                    discountAmount: document.getElementById('mDisc').value,
+                    payDate: document.getElementById('mDate').value,
+                    payMode: document.getElementById('mMode').value
+                })
+            });
+            closeModal();
+            loadData();
+        }
+
+
+        // --- DELETE BILL WITH CONFIRMATION ---
+        function deleteBill(bill) {
+            const confirmMsg = `Are you sure you want to delete this bill?\n\nVendor: ${bill.vendor}\nBill No: ${bill.billNo}\nAmount: ₹${bill.totalAmount}\n\nThis action cannot be undone!`;
+            
+            if(confirm(confirmMsg)) {
+                fetch(`/api/textile/bill/${bill.id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        alert('✅ Bill deleted successfully!');
+                        loadData(); // Refresh the ledger
+                    } else {
+                        alert('❌ Error deleting bill: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('❌ Error deleting bill. Please try again.');
+                });
+            }
+        }
+
+        // --- DELETE SALE WITH CONFIRMATION ---
+        function deleteSale(sale) {
+            const confirmMsg = `Are you sure you want to delete this sale?\n\nCustomer: ${sale.customer}\nInvoice No: ${sale.invoiceNo}\nAmount: ₹${sale.totalAmount}\n\nThis action cannot be undone!`;
+            
+            if(confirm(confirmMsg)) {
+                fetch(`/api/textile/sale/${sale.id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        alert('✅ Sale deleted successfully!');
+                        loadData(); // Refresh the ledger
+                    } else {
+                        alert('❌ Error deleting sale: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('❌ Error deleting sale. Please try again.');
+                });
+            }
+        }
+
+        // --- DELETE EXPENSE WITH CONFIRMATION ---
+        function deleteExpense(expense) {
+            const confirmMsg = `Are you sure you want to delete this expense?\n\nCategory: ${expense.category}\nDescription: ${expense.description}\nAmount: ₹${expense.amount}\n\nThis action cannot be undone!`;
+            
+            if(confirm(confirmMsg)) {
+                fetch(`/api/textile/expense/${expense.id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        alert('✅ Expense deleted successfully!');
+                        loadData(); // Refresh the ledger
+                    } else {
+                        alert('❌ Error deleting expense: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('❌ Error deleting expense. Please try again.');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

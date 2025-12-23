@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom ERP styles */
+.erp-card {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4;
+}
+
+.erp-card-dark {
+  @apply bg-gray-800 border-gray-700 text-white;
+}
+
+.pipeline-stage-incoming {
+  @apply bg-blue-100 border-blue-300 text-blue-800;
+}
+
+.pipeline-stage-qualified {
+  @apply bg-purple-100 border-purple-300 text-purple-800;
+}
+
+.pipeline-stage-tech-audit {
+  @apply bg-orange-100 border-orange-300 text-orange-800;
+}
+
+.pipeline-stage-proposal {
+  @apply bg-cyan-100 border-cyan-300 text-cyan-800;
+}
+
+.pipeline-stage-negotiation {
+  @apply bg-orange-200 border-orange-400 text-orange-900;
+}
+
+.pipeline-stage-closed-won {
+  @apply bg-green-100 border-green-300 text-green-800;
+}
+
+.pipeline-stage-lost {
+  @apply bg-red-100 border-red-300 text-red-800;
+}
+
+/* Drag and drop styles */
+.dragging {
+  @apply opacity-50 transform rotate-2 shadow-lg;
+}
+
+.drop-zone {
+  @apply min-h-32 border-2 border-dashed border-gray-300 rounded-lg p-2 transition-colors;
+}
+
+.drop-zone-active {
+  @apply border-blue-500 bg-blue-50;
+}
+
+/* Lead card styles */
+.lead-card {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200 p-3 mb-2 cursor-pointer transition-all hover:shadow-md;
+}
+
+.lead-card:hover {
+  @apply transform translate-y-[-2px];
+}
+
+.lead-card-need-followup {
+  @apply border-red-400 bg-red-50;
+}
+
+.lead-score-high {
+  @apply bg-green-100 text-green-800;
+}
+
+.lead-score-medium {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.lead-score-low {
+  @apply bg-red-100 text-red-800;
+}

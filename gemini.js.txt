@@ -1,0 +1,64 @@
+let taskArray = [];
+
+    // 2. Function: Ye Array ko screen par "Print" karega
+    function printTasks() {
+        const ul = document.getElementById("taskList");
+        ul.innerHTML = ""; // Pehle purana HTML saaf karo
+
+        // Loop chala kar har item ko print karo
+        for (let i = 0; i < taskArray.length; i++) {
+            // Notice: Humne delete aur edit me 'i' (index) pass kiya hai
+            ul.innerHTML += `
+                <li>
+                    <span class="text">${taskArray[i]}</span>
+                    <div>
+                        <button class="action-btn edit-btn" onclick="editTask(${i})">Edit</button>
+                        <button class="action-btn delete-btn" onclick="deleteTask(${i})">Delete</button>
+                    </div>
+                </li>
+            `;
+        }
+    }
+
+    // 3. Function: Add Task
+    function addTask() {
+        const input = document.getElementById("taskInput");
+        const taskText = input.value;
+
+        if (taskText === "") {
+            alert("Kuch likhna to padega!");
+            return;
+        }
+
+        // DOM me add karne ke bajaye, Array me push karo
+        taskArray.push(taskText);
+        
+        // Screen par update dikhane ke liye print function call karo
+        printTasks();
+
+        input.value = "";
+    }
+
+    // 4. Function: Delete Task (Ab ye DOM se nahi, Array index se delete karega)
+    function deleteTask(index) {
+        // Array se us index wala item hatao
+        taskArray.splice(index, 1);
+
+        // List update ho gayi, ab wapis print karo
+        printTasks();
+    }
+
+    // 5. Function: Edit Task
+    function editTask(index) {
+        // Array se purana text nikalo
+        const oldText = taskArray[index];
+        const newText = prompt("Task update karein:", oldText);
+
+        if (newText !== null && newText.trim() !== "") {
+            // Array me value update karo
+            taskArray[index] = newText;
+            
+            // Wapis print karo
+            printTasks();
+        }
+    }

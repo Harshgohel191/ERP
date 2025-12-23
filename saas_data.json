@@ -1,0 +1,218 @@
+{
+  "leads": [
+    {
+      "id": 1766464544709,
+      "name": "Harsh",
+      "email": "harshgohel191@gmail.com",
+      "phone": "09924574964",
+      "company": "Vibhu Enterprise",
+      "source": "Social Media",
+      "service": "Web Development",
+      "notes": "",
+      "score": 50,
+      "status": "Converted",
+      "assignedTo": null,
+      "createdAt": "2025-12-23T04:35:44.709Z",
+      "lastContact": "2025-12-23T09:27:51.649Z",
+      "nextFollowUp": null,
+      "convertedTo": 1766464568648,
+      "activities": [
+        {
+          "id": 1766482057871,
+          "type": "call",
+          "description": "Phone call madee",
+          "notes": "",
+          "outcome": "",
+          "date": "2025-12-23T09:27:37.871Z",
+          "user": "Current User",
+          "timestamp": "2025-12-23T09:27:37.871Z"
+        },
+        {
+          "id": 1766482071649,
+          "type": "note",
+          "description": "50000",
+          "notes": "",
+          "outcome": "",
+          "date": "2025-12-23T09:27:51.649Z",
+          "user": "Current User",
+          "timestamp": "2025-12-23T09:27:51.649Z"
+        }
+      ],
+      "conversationHistory": [
+        {
+          "type": "call",
+          "content": "Phone call madee",
+          "date": "2025-12-23T09:27:37.871Z",
+          "summary": "No outcome recorded"
+        },
+        {
+          "type": "note",
+          "content": "50000",
+          "date": "2025-12-23T09:27:51.649Z",
+          "summary": "No outcome recorded"
+        }
+      ]
+    },
+    {
+      "id": 1766465427933,
+      "name": "Gohel Harsh",
+      "email": "harshgohel1m@gmail.com",
+      "phone": "09924574964",
+      "company": "Vibhu Enterprise",
+      "source": "Website",
+      "service": "Web Development",
+      "notes": "",
+      "score": 50,
+      "status": "New",
+      "assignedTo": null,
+      "createdAt": "2025-12-23T04:50:27.933Z",
+      "lastContact": "2025-12-23T04:50:27.933Z",
+      "nextFollowUp": null
+    },
+    {
+      "id": 1766481808785,
+      "name": "Gohel Harsh",
+      "email": "harshgohel1m@gmail.com",
+      "phone": "09924574964",
+      "company": "Vibhu Enterprise",
+      "source": "Website",
+      "service": "Web Development",
+      "notes": "h",
+      "score": 50,
+      "status": "New",
+      "assignedTo": null,
+      "createdAt": "2025-12-23T09:23:28.785Z",
+      "lastContact": "2025-12-23T09:23:28.785Z",
+      "nextFollowUp": null
+    }
+  ],
+  "deals": [
+    {
+      "id": 1766464655631,
+      "clientName": "Harsh",
+      "clientEmail": "harshgohel191@gmail.com",
+      "company": "Vibhu Enterprise",
+      "value": 8000,
+      "service": "Web Development",
+      "stage": "Closed Won",
+      "probability": 100,
+      "expectedCloseDate": "2025-12-23",
+      "notes": "",
+      "createdAt": "2025-12-23T04:37:35.631Z",
+      "activities": [
+        {
+          "type": "Stage Change",
+          "from": "Negotiation",
+          "to": "Closed Won",
+          "date": "2025-12-23T04:37:57.644Z",
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": 1766453789005,
+      "clientId": 1766453789005,
+      "clientName": "Test Lead",
+      "service": "General Service",
+      "monthlyAmount": 9259259.25,
+      "status": "Active",
+      "startDate": "2025-12-23",
+      "nextBilling": "2026-01-22",
+      "createdAt": "2025-12-23T01:36:29.005Z"
+    },
+    {
+      "id": 1766464677644,
+      "clientId": 1766464677644,
+      "clientName": "Harsh",
+      "service": "Web Development",
+      "monthlyAmount": 666.6666666666666,
+      "status": "Active",
+      "startDate": "2025-12-23",
+      "nextBilling": "2026-01-22",
+      "createdAt": "2025-12-23T04:37:57.644Z"
+    }
+  ],
+  "goals": [
+    {
+      "id": 1766453538480,
+      "type": "Monthly Revenue",
+      "target": 50000,
+      "current": 5000,
+      "month": 12,
+      "year": 2024,
+      "description": "Test goal",
+      "createdAt": "2025-12-23T01:32:18.480Z"
+    }
+  ],
+  "team": [],
+  "services": [],
+  "clients": [
+    {
+      "id": 1766453789005,
+      "name": "Test Lead",
+      "email": "test@example.com",
+      "company": "TestCorp",
+      "dealId": 1766453668393,
+      "service": "General Service",
+      "status": "Active",
+      "createdAt": "2025-12-23T01:36:29.005Z"
+    },
+    {
+      "id": 1766464677644,
+      "name": "Harsh",
+      "email": "harshgohel191@gmail.com",
+      "company": "Vibhu Enterprise",
+      "dealId": 1766464655631,
+      "service": "Web Development",
+      "status": "Active",
+      "createdAt": "2025-12-23T04:37:57.644Z"
+    }
+  ],
+  "pipeline": [],
+  "revenue": [
+    {
+      "id": 1766453459269,
+      "amount": 15000,
+      "source": "Subscription",
+      "clientName": "TechCorp",
+      "service": "Web Development",
+      "date": "2025-12-23",
+      "notes": "Monthly subscription payment",
+      "createdAt": "2025-12-23T01:30:59.269Z"
+    },
+    {
+      "id": 1766453538468,
+      "amount": 5000,
+      "source": "API Test",
+      "clientName": "Test Client",
+      "service": "Testing",
+      "date": "2025-12-23",
+      "notes": "",
+      "createdAt": "2025-12-23T01:32:18.468Z"
+    },
+    {
+      "id": 1766464258695,
+      "amount": 10000,
+      "source": "Subscription",
+      "clientName": "Tf",
+      "service": "Manhavi app",
+      "date": "2025-12-23",
+      "notes": "Modal",
+      "createdAt": "2025-12-23T04:30:58.695Z"
+    },
+    {
+      "id": 1766464349767,
+      "amount": 8000,
+      "source": "Subscription",
+      "clientName": "h",
+      "service": "hold",
+      "date": "2025-12-23",
+      "notes": "ok",
+      "createdAt": "2025-12-23T04:32:29.767Z"
+    }
+  ],
+  "expenses": [],
+  "metrics": {}
+}

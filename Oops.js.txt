@@ -1,0 +1,215 @@
+
+class Employee {
+    constructor(id, name, salary) {
+        this.id = id;
+        this.name = name;
+        this.salary = parseFloat(salary); // Ensure salary is stored as number
+    }
+}
+
+
+class EmployeeSystem {    
+    constructor() {
+        // LocalStorage se data load karo ya empty array
+        this.employees = JSON.parse(localStorage.getItem('employees')) || [];
+        
+        // DOM Elements
+        this.form = document.getElementById('employeeForm');
+        this.tableBody = document.getElementById('employeeList');
+        this.submitBtn = document.getElementById('submitBtn');
+        this.bonusBtn = document.getElementById('applyBonusBtn');
+        
+        // State
+        this.isEditing = false;
+
+        // Start App
+        this.render();
+        
+        // Event Listeners
+        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        this.tableBody.addEventListener('click', (e) => this.handleTableActions(e));
+        
+        if(this.bonusBtn) {
+            this.bonusBtn.addEventListener('click', () => this.applyBonusToAll());
+        }
+    }
+
+    // --- LOGIC: Bonus Calculation (Real-time) ---
+    calculateBonus(salary) {
+        // Salary ko number mein pakka convert karein calculation se pehle
+        let numSalary = parseFloat(salary);
+        let percentage = 0;
+        
+        // Logic: <= 10000 hai to 10%, nahi to 5%
+        if (numSalary <= 10000) {
+            percentage = 10;
+        } else {
+            percentage = 5;
+        }
+
+        const bonusAmount = (numSalary * percentage) / 100;
+        const totalSalary = numSalary + bonusAmount;
+
+        return { percentage, bonusAmount, totalSalary };
+    }
+
+    // --- FORMATTER: Currency (INR) ---
+    formatMoney(amount) {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            maximumFractionDigits: 0 
+        }).format(amount);
+    }
+
+    // --- HANDLER: Add or Update ---
+    handleSubmit(e) {
+        e.preventDefault(); // Page refresh rokein
+
+        const nameInput = document.getElementById('empName');
+        const salaryInput = document.getElementById('empSalary');
+        const idInput = document.getElementById('empId');
+
+        // Validation
+        if (nameInput.value === '' || salaryInput.value === '') {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        // IMPORTANT: Value ko Number mein convert karein
+        const salaryValue = parseFloat(salaryInput.value);
+
+        if (this.isEditing) {
+            // --- UPDATE MODE ---
+            this.updateEmployee(idInput.value, nameInput.value, salaryValue);
+            
+            // Button wapas normal karein
+            this.submitBtn.textContent = 'Add Employee';
+            this.submitBtn.classList.remove('update-mode');
+            this.isEditing = false;
+        } else {
+            // --- CREATE MODE ---
+            const newEmployee = new Employee(Date.now(), nameInput.value, salaryValue);
+            this.employees.push(newEmployee);
+        }
+
+        // Save aur Refresh karein
+        this.saveAndRender();
+        
+        // Form Clear karein
+        this.form.reset();
+        document.getElementById('empId').value = '';
+    }
+
+    // --- UPDATE LOGIC (FIXED) ---
+    updateEmployee(id, name, salary) {
+        // Map function use karke naya array banayenge
+        this.employees = this.employees.map(emp => {
+            // ID match karein (String convert karke taaki type mismatch na ho)
+            if (String(emp.id) === String(id)) {
+                return { 
+                    ...emp, 
+                    name: name, 
+                    salary: parseFloat(salary) // Yahan salary update ho rahi hai
+                };
+            }
+            return emp;
+        });
+    }
+
+    // --- RENDER: Table Show Karna ---
+    render() {
+        this.tableBody.innerHTML = ''; 
+
+        this.employees.forEach(emp => {
+            const row = document.createElement('tr');
+            
+            // Calculation har baar render ke time fresh hogi
+            const stats = this.calculateBonus(emp.salary);
+
+            row.innerHTML = `
+                <td>${emp.name}</td>
+                <td>${this.formatMoney(emp.salary)}</td>
+                <td><span style="color: #666; font-size: 0.9em;">${stats.percentage}%</span></td>
+                <td class="bonus-col">+${this.formatMoney(stats.bonusAmount)}</td>
+                <td class="total-col">${this.formatMoney(stats.totalSalary)}</td>
+                <td>
+                    <button class="btn-edit" data-id="${emp.id}">Edit</button>
+                    <button class="btn-delete" data-id="${emp.id}">Delete</button>
+                </td>
+            `;
+            this.tableBody.appendChild(row);
+        });
+    }
+
+    // --- DELETE LOGIC ---
+    deleteEmployee(id) {
+        if(confirm('Are you sure you want to delete this employee?')) {
+            this.employees = this.employees.filter(emp => String(emp.id) !== String(id));
+            this.saveAndRender();
+            
+            // Agar edit karte waqt delete kiya to form reset karo
+            if(this.isEditing && document.getElementById('empId').value == id) {
+                this.form.reset();
+                this.submitBtn.textContent = 'Add Employee';
+                this.submitBtn.classList.remove('update-mode');
+                this.isEditing = false;
+            }
+        }
+    }
+
+    // --- EDIT PREPARATION ---
+    loadEmployeeForEdit(id) {
+        const employee = this.employees.find(emp => String(emp.id) === String(id));
+        if (employee) {
+            document.getElementById('empName').value = employee.name;
+            document.getElementById('empSalary').value = employee.salary;
+            document.getElementById('empId').value = employee.id;
+            
+            this.submitBtn.textContent = 'Update Employee';
+            this.submitBtn.classList.add('update-mode');
+            this.isEditing = true;
+        }
+    }
+
+    // // --- BONUS ACTION (Permanent Update) ---
+    // applyBonusToAll() {
+    //     if (this.employees.length === 0) {
+    //         alert("List khali hai!");
+    //         return;
+    //     }
+
+    //     if(confirm("Sabki salary permanently increase ho jayegi. Continue?")) {
+    //         this.employees = this.employees.map(emp => {
+    //             const stats = this.calculateBonus(emp.salary);
+    //             // Salary ko update karke Final Salary bana rahe hain
+    //             emp.salary = stats.totalSalary; 
+    //             return emp;
+    //         });
+            
+    //         this.saveAndRender();
+    //     }
+    // }
+
+    // --- HELPER: Save & Refresh ---
+    saveAndRender() {
+        localStorage.setItem('employees', JSON.stringify(this.employees));
+        this.render();
+    }
+
+    // --- EVENT DELEGATION (Table Clicks) ---
+    handleTableActions(e) {
+        const id = e.target.getAttribute('data-id');
+        
+        if (e.target.classList.contains('btn-delete')) {
+            this.deleteEmployee(id);
+        } else if (e.target.classList.contains('btn-edit')) {
+            this.loadEmployeeForEdit(id);
+        }
+    }
+}
+
+// App Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    new EmployeeSystem();
+});
