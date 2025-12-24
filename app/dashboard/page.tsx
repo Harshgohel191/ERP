@@ -10,7 +10,8 @@ import { LeadDetailsPanel } from '@/components/LeadDetailsPanel'
 import { ReportsPanel } from '@/components/ReportsPanel'
 import { PipelineStats } from '@/components/PipelineStats'
 import { RevenueAnalytics } from '@/components/RevenueAnalytics'
-import { AddLeadModal } from '@/components/AddLeadModal'
+
+
 import { Lead } from '@/types/lead'
 
 
@@ -18,7 +19,8 @@ export default function DashboardPage() {
   const [leads, setLeads] = useState<Lead[]>([])
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [showReports, setShowReports] = useState(false)
-  const [showAddLeadModal, setShowAddLeadModal] = useState(false)
+
+
   const [isLoading, setIsLoading] = useState(true)
 
   // Load leads on component mount
@@ -118,14 +120,8 @@ export default function DashboardPage() {
     setSelectedLead(updatedLead)
   }
 
-  const handleAddLead = () => {
-    setShowAddLeadModal(true)
-  }
 
-  const handleLeadCreated = (newLead: Lead) => {
-    setLeads(prev => [newLead, ...prev])
-    setShowAddLeadModal(false)
-  }
+
 
   if (isLoading) {
     return (
@@ -182,12 +178,8 @@ export default function DashboardPage() {
         <RevenueAnalytics leads={leads} />
       </div>
       
-      {/* Add Lead Modal */}
-      <AddLeadModal
-        isOpen={showAddLeadModal}
-        onClose={() => setShowAddLeadModal(false)}
-        onSave={handleLeadCreated}
-      />
+
+
     </div>
   )
 }
