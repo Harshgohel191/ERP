@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Bonus System</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        
+        .form-group { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
+        input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; flex: 1; }
+        button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
+        #submitBtn { background-color: #28a745; }
+        #submitBtn.update-mode { background-color: #ffc107; color: black; }
+        
+        /* New Bonus Button Style */
+        .bonus-btn-container { text-align: right; margin-bottom: 10px; }
+        #applyBonusBtn { background-color: #6f42c1; } /* Purple color */
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #007bff; color: white; }
+        
+        /* Highlight Bonus Columns */
+        .bonus-col { color: #28a745; font-weight: bold; }
+        .total-col { color: #0056b3; font-weight: bold; }
+
+        .btn-edit { background-color: #ffc107; padding: 5px 10px; margin-right: 5px; color: #000; }
+        .btn-delete { background-color: #dc3545; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Employee Salary & Bonus System</h2>
+
+        <form id="employeeForm">
+            <input type="hidden" id="empId">
+            <div class="form-group">
+                <input type="text" id="empName" placeholder="Employee Name" required>
+                <input type="number" id="empSalary" placeholder="Current Salary (₹)" required>
+                <button type="submit" id="submitBtn">Add Employee</button>
+            </div>
+        </form>
+
+        <div class="bonus-btn-container">
+            <button id="applyBonusBtn" title="Sabki salary permanently increase karein">Apply Bonus to All</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Base Salary</th>
+                    <th>Bonus %</th>
+                    <th>Bonus Amount</th>
+                    <th>Final Salary</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="employeeList">
+                </tbody>
+        </table>
+    </div>
+
+    <script src="Oops.js"></script>
+</body>
+</html>

@@ -1,0 +1,436 @@
+{
+  "leads": [
+    {
+      "id": 1766464544709,
+      "name": "Harsh",
+      "email": "harshgohel191@gmail.com",
+      "phone": "09924574964",
+      "company": "Vibhu Enterprise",
+      "source": "Social Media",
+      "service": "Web Development",
+      "notes": "",
+      "score": 50,
+      "status": "Negotiation",
+      "assignedTo": null,
+      "createdAt": "2025-12-23T04:35:44.709Z",
+      "lastContact": "2025-12-23T17:33:34.875Z",
+      "nextFollowUp": null,
+      "convertedTo": 1766464568648,
+      "activities": [
+        {
+          "id": 1766482057871,
+          "type": "call",
+          "description": "Phone call madee",
+          "notes": "",
+          "outcome": "",
+          "date": "2025-12-23T09:27:37.871Z",
+          "user": "Current User",
+          "timestamp": "2025-12-23T09:27:37.871Z"
+        },
+        {
+          "id": 1766482071649,
+          "type": "note",
+          "description": "50000",
+          "notes": "",
+          "outcome": "",
+          "date": "2025-12-23T09:27:51.649Z",
+          "user": "Current User",
+          "timestamp": "2025-12-23T09:27:51.649Z"
+        },
+        {
+          "id": 1766511097374,
+          "type": "status_change",
+          "description": "Status changed from Converted to Qualified",
+          "notes": "",
+          "date": "2025-12-23T17:31:37.374Z",
+          "user": "Current User",
+          "timestamp": "2025-12-23T17:31:37.374Z"
+        },
+        {
+          "id": 1766511214875,
+          "type": "status_change",
+          "description": "Status changed from Qualified to Negotiation",
+          "notes": "no",
+          "date": "2025-12-23T17:33:34.875Z",
+          "user": "Current User",
+          "timestamp": "2025-12-23T17:33:34.875Z"
+        },
+        {
+          "id": 1766511214876,
+          "type": "note",
+          "description": "no",
+          "date": "2025-12-23T17:33:34.875Z",
+          "user": "Current User",
+          "timestamp": "2025-12-23T17:33:34.875Z"
+        }
+      ],
+      "conversationHistory": [
+        {
+          "type": "call",
+          "content": "Phone call madee",
+          "date": "2025-12-23T09:27:37.871Z",
+          "summary": "No outcome recorded"
+        },
+        {
+          "type": "note",
+          "content": "50000",
+          "date": "2025-12-23T09:27:51.649Z",
+          "summary": "No outcome recorded"
+        }
+      ],
+      "priority": "Medium"
+    },
+    {
+      "id": 1766465427933,
+      "name": "Gohel Harsh",
+      "email": "harshgohel1m@gmail.com",
+      "phone": "09924574964",
+      "company": "Vibhu Enterprise",
+      "source": "Website",
+      "service": "Web Development",
+      "notes": "",
+      "score": 50,
+      "status": "Converted",
+      "assignedTo": null,
+      "createdAt": "2025-12-23T04:50:27.933Z",
+      "lastContact": "2025-12-23T04:50:27.933Z",
+      "nextFollowUp": null,
+      "convertedTo": 1766511251573
+    },
+    {
+      "id": 1766481808785,
+      "name": "Gohel Harsh",
+      "email": "harshgohel1m@gmail.com",
+      "phone": "09924574964",
+      "company": "Vibhu Enterprise",
+      "source": "Website",
+      "service": "Web Development",
+      "notes": "h",
+      "score": 50,
+      "status": "New",
+      "assignedTo": null,
+      "createdAt": "2025-12-23T09:23:28.785Z",
+      "lastContact": "2025-12-23T09:23:28.785Z",
+      "nextFollowUp": null
+    },
+    {
+      "id": 1766543569008,
+      "name": "Test Lead",
+      "email": "test@example.com",
+      "phone": "",
+      "company": "TestCorp",
+      "source": "API Test",
+      "service": "Testing",
+      "notes": "",
+      "score": 75,
+      "status": "New",
+      "assignedTo": null,
+      "createdAt": "2025-12-24T02:32:49.008Z",
+      "lastContact": "2025-12-24T02:32:49.008Z",
+      "nextFollowUp": null,
+      "activities": [],
+      "conversationHistory": []
+    },
+    {
+      "id": 1766545559299,
+      "name": "Test Lead",
+      "email": "test@example.com",
+      "phone": "",
+      "company": "TestCorp",
+      "source": "API Test",
+      "service": "Testing",
+      "notes": "",
+      "score": 75,
+      "status": "New",
+      "assignedTo": null,
+      "createdAt": "2025-12-24T03:05:59.299Z",
+      "lastContact": "2025-12-24T03:05:59.299Z",
+      "nextFollowUp": null,
+      "activities": [],
+      "conversationHistory": []
+    }
+  ],
+  "deals": [
+    {
+      "id": 1766511251573,
+      "leadId": 1766465427933,
+      "clientName": "Gohel Harsh",
+      "clientEmail": "harshgohel1m@gmail.com",
+      "company": "Vibhu Enterprise",
+      "value": 700000,
+      "service": "General Service",
+      "stage": "Closed Lost",
+      "probability": 10,
+      "expectedCloseDate": "2026-01-22",
+      "notes": "Converted from lead",
+      "createdAt": "2025-12-23T17:34:11.573Z",
+      "activities": [
+        {
+          "type": "Stage Change",
+          "from": "Prospecting",
+          "to": "Qualified",
+          "date": "2025-12-23T17:37:42.586Z",
+          "notes": ""
+        },
+        {
+          "type": "Stage Change",
+          "from": "Qualified",
+          "to": "Closed Won",
+          "date": "2025-12-23T17:37:46.942Z",
+          "notes": ""
+        },
+        {
+          "type": "Stage Change",
+          "from": "Closed Won",
+          "to": "Closed Lost",
+          "date": "2025-12-23T17:38:02.141Z",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": 1766511428908,
+      "clientName": "hej",
+      "clientEmail": "wkjh@gmail.dfk",
+      "company": "rkwj",
+      "value": 100000,
+      "service": "Web Development",
+      "stage": "Proposal",
+      "probability": 80,
+      "expectedCloseDate": "2025-12-23",
+      "notes": "kjdk",
+      "createdAt": "2025-12-23T17:37:08.908Z",
+      "activities": []
+    },
+    {
+      "id": 1766543569049,
+      "clientName": "Test Client",
+      "clientEmail": "",
+      "company": "TestCorp",
+      "value": 25000,
+      "service": "API Testing",
+      "stage": "Proposal",
+      "probability": 60,
+      "expectedCloseDate": "2026-01-23",
+      "notes": "",
+      "createdAt": "2025-12-24T02:32:49.049Z",
+      "activities": []
+    },
+    {
+      "id": 1766545559327,
+      "clientName": "Test Client",
+      "clientEmail": "",
+      "company": "TestCorp",
+      "value": 25000,
+      "service": "API Testing",
+      "stage": "Proposal",
+      "probability": 60,
+      "expectedCloseDate": "2026-01-23",
+      "notes": "",
+      "createdAt": "2025-12-24T03:05:59.327Z",
+      "activities": []
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": 1766453789005,
+      "clientId": 1766453789005,
+      "clientName": "Test Lead",
+      "service": "General Service",
+      "monthlyAmount": 9259259.25,
+      "status": "Active",
+      "startDate": "2025-12-23",
+      "nextBilling": "2026-01-22",
+      "createdAt": "2025-12-23T01:36:29.005Z"
+    },
+    {
+      "id": 1766464677644,
+      "clientId": 1766464677644,
+      "clientName": "Harsh",
+      "service": "Web Development",
+      "monthlyAmount": 666.6666666666666,
+      "status": "Active",
+      "startDate": "2025-12-23",
+      "nextBilling": "2026-01-22",
+      "createdAt": "2025-12-23T04:37:57.644Z"
+    },
+    {
+      "id": 1766511466942,
+      "clientId": 1766511466942,
+      "clientName": "Gohel Harsh",
+      "service": "General Service",
+      "monthlyAmount": 58333,
+      "totalContractValue": 700000,
+      "billingCycle": "Monthly",
+      "status": "Active",
+      "startDate": "2025-12-23",
+      "nextBilling": "2026-01-22",
+      "lastBilling": null,
+      "billingHistory": [],
+      "createdAt": "2025-12-23T17:37:46.942Z"
+    }
+  ],
+  "goals": [
+    {
+      "id": 1766453538480,
+      "type": "Monthly Revenue",
+      "target": 50000,
+      "current": 5000,
+      "month": 12,
+      "year": 2024,
+      "description": "Test goal",
+      "createdAt": "2025-12-23T01:32:18.480Z"
+    },
+    {
+      "id": 1766543569116,
+      "type": "Monthly Revenue",
+      "target": 50000,
+      "current": 5000,
+      "month": 12,
+      "year": 2024,
+      "description": "Test goal",
+      "createdAt": "2025-12-24T02:32:49.116Z"
+    },
+    {
+      "id": 1766545559371,
+      "type": "Monthly Revenue",
+      "target": 50000,
+      "current": 5000,
+      "month": 12,
+      "year": 2024,
+      "description": "Test goal",
+      "createdAt": "2025-12-24T03:05:59.371Z"
+    }
+  ],
+  "team": [],
+  "services": [],
+  "clients": [
+    {
+      "id": 1766453789005,
+      "name": "Test Lead",
+      "email": "test@example.com",
+      "company": "TestCorp",
+      "dealId": 1766453668393,
+      "service": "General Service",
+      "status": "Active",
+      "createdAt": "2025-12-23T01:36:29.005Z"
+    },
+    {
+      "id": 1766464677644,
+      "name": "Harsh",
+      "email": "harshgohel191@gmail.com",
+      "company": "Vibhu Enterprise",
+      "dealId": 1766464655631,
+      "service": "Web Development",
+      "status": "Active",
+      "createdAt": "2025-12-23T04:37:57.644Z"
+    },
+    {
+      "id": 1766511466942,
+      "name": "Gohel Harsh",
+      "email": "harshgohel1m@gmail.com",
+      "company": "Vibhu Enterprise",
+      "dealId": 1766511251573,
+      "service": "General Service",
+      "status": "Active",
+      "createdAt": "2025-12-23T17:37:46.942Z"
+    }
+  ],
+  "pipeline": [],
+  "revenue": [
+    {
+      "id": 1766453459269,
+      "amount": 15000,
+      "source": "Subscription",
+      "clientName": "TechCorp",
+      "service": "Web Development",
+      "date": "2025-12-23",
+      "notes": "Monthly subscription payment",
+      "createdAt": "2025-12-23T01:30:59.269Z"
+    },
+    {
+      "id": 1766453538468,
+      "amount": 5000,
+      "source": "API Test",
+      "clientName": "Test Client",
+      "service": "Testing",
+      "date": "2025-12-23",
+      "notes": "",
+      "createdAt": "2025-12-23T01:32:18.468Z"
+    },
+    {
+      "id": 1766464258695,
+      "amount": 10000,
+      "source": "Subscription",
+      "clientName": "Tf",
+      "service": "Manhavi app",
+      "date": "2025-12-23",
+      "notes": "Modal",
+      "createdAt": "2025-12-23T04:30:58.695Z"
+    },
+    {
+      "id": 1766464349767,
+      "amount": 8000,
+      "source": "Subscription",
+      "clientName": "h",
+      "service": "hold",
+      "date": "2025-12-23",
+      "notes": "ok",
+      "createdAt": "2025-12-23T04:32:29.767Z"
+    },
+    {
+      "id": 1766511298730,
+      "amount": 50000,
+      "source": "One-time Payment",
+      "clientName": "vibhu",
+      "service": "mahan",
+      "date": "2025-12-23",
+      "notes": "ndjn",
+      "createdAt": "2025-12-23T17:34:58.730Z"
+    },
+    {
+      "id": 1766511328174,
+      "amount": 8000,
+      "source": "Subscription",
+      "clientName": "hello",
+      "service": "rkjn",
+      "date": "2025-12-23",
+      "notes": "",
+      "createdAt": "2025-12-23T17:35:28.174Z"
+    },
+    {
+      "id": 1766511466943,
+      "amount": 700000,
+      "source": "Contract Signed",
+      "clientName": "Gohel Harsh",
+      "service": "General Service",
+      "subscriptionId": 1766511466942,
+      "date": "2025-12-23",
+      "notes": "Initial contract value - Monthly billing",
+      "type": "contract",
+      "createdAt": "2025-12-23T17:37:46.942Z"
+    },
+    {
+      "id": 1766543569085,
+      "amount": 5000,
+      "source": "API Test",
+      "clientName": "Test Client",
+      "service": "Testing",
+      "date": "2025-12-24",
+      "notes": "",
+      "createdAt": "2025-12-24T02:32:49.085Z"
+    },
+    {
+      "id": 1766545559358,
+      "amount": 5000,
+      "source": "API Test",
+      "clientName": "Test Client",
+      "service": "Testing",
+      "date": "2025-12-24",
+      "notes": "",
+      "createdAt": "2025-12-24T03:05:59.358Z"
+    }
+  ],
+  "expenses": [],
+  "metrics": {}
+}

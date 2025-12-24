@@ -1,0 +1,721 @@
+// ========================================
+// ERP MAIN SYSTEM - PRISMA SCHEMA
+// Multi-Business ERP with Soft Deletes
+// ========================================
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ========================================
+// CORE MODELS WITH SOFT DELETES
+// ========================================
+
+// Diamond Business Module
+model DiamondExpense {
+  id           BigInt      @id @default(autoincrement())
+  expenseDate  DateTime    @map("expense_date")
+  expenseType  ExpenseType @map("expense_type")
+  category     String
+  amount       Decimal     @db.Decimal(15, 2)
+  description  String?     @db.Text
+  status       ExpenseStatus @default(Completed)
+  
+  // Audit Trail
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  deletedAt    DateTime?   @map("deleted_at")
+  isActive     Boolean     @default(true) @map("is_active")
+  
+  @@map("diamond_expenses")
+  @@index([expenseDate])
+  @@index([category])
+  @@index([expenseType])
+  @@index([isActive])
+}
+
+enum ExpenseType {
+  expense
+  income
+  transfer
+}
+
+enum ExpenseStatus {
+  Completed
+  Pending
+  Cancelled
+}
+
+// ========================================
+// TEXTILE BUSINESS MODULE
+// ========================================
+
+// Textile Vendors
+model TextileVendor {
+  id            BigInt             @id @default(autoincrement())
+  vendorName    String             @map("vendor_name")
+  vendorType    TextileVendorType  @map("vendor_type") @default(GreyPurchase)
+  contactInfo   String?            @map("contact_info") @db.Text
+  address       String?            @db.Text
+  
+  // Audit Trail
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
+  deletedAt     DateTime?          @map("deleted_at")
+  isActive      Boolean            @default(true) @map("is_active")
+  
+  // Relations
+  bills         TextileBill[]
+  stockItems    TextileStock[]
+  itemHistory   TextileItemHistory[]
+  
+  @@map("textile_vendors")
+  @@index([vendorName])
+  @@index([vendorType])
+  @@index([isActive])
+}
+
+enum TextileVendorType {
+  GreyPurchase
+  Dyeing
+  Finishing
+  Other
+}
+
+// Textile Bills (Purchase Orders)
+model TextileBill {
+  id            BigInt               @id @default(autoincrement())
+  vendorId      BigInt?              @map("vendor_id")
+  billNumber    String               @map("bill_number")
+  billDate      DateTime             @map("bill_date")
+  dueDate       DateTime?            @map("due_date")
+  creditDays    Int                  @default(30) @map("credit_days")
+  
+  // Financial Data
+  subtotal      Decimal              @default(0) @db.Decimal(15, 2)
+  gstIncluded   Boolean              @default(false) @map("gst_included")
+  gstRate       Decimal?             @db.Decimal(5, 2) @map("gst_rate")
+  gstAmount     Decimal?             @db.Decimal(15, 2) @map("gst_amount")
+  totalAmount   Decimal              @map("total_amount")
+  paidAmount    Decimal              @default(0) @map("paid_amount")
+  discountAmount Decimal             @default(0) @map("discount_amount")
+  balanceAmount Decimal              @default(0) @map("balance_amount")
+  
+  // Status
+  status        TextileBillStatus    @default(Unpaid)
+  
+  // Audit Trail
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt @map("updated_at")
+  deletedAt     DateTime?            @map("deleted_at")
+  isActive      Boolean              @default(true) @map("is_active")
+  
+  // Relations
+  vendor        TextileVendor?       @relation(fields: [vendorId], references: [id])
+  items         TextileBillItem[]
+  
+  @@map("textile_bills")
+  @@index([billNumber])
+  @@index([billDate])
+  @@index([vendorId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([isActive])
+}
+
+enum TextileBillStatus {
+  Unpaid
+  Partial
+  Paid
+  Overdue
+}
+
+// Textile Bill Items
+model TextileBillItem {
+  id          BigInt    @id @default(autoincrement())
+  billId      BigInt    @map("bill_id")
+  itemName    String    @map("item_name")
+  quantity    Decimal   @db.Decimal(10, 3)
+  rate        Decimal   @db.Decimal(10, 2)
+  total       Decimal   @db.Decimal(15, 2)
+  
+  // Audit Trail
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+  
+  // Relations
+  bill        TextileBill @relation(fields: [billId], references: [id], onDelete: Cascade)
+  
+  @@map("textile_bill_items")
+  @@index([billId])
+  @@index([itemName])
+}
+
+// Textile Stock Management
+model TextileStock {
+  id              BigInt           @id @default(autoincrement())
+  stockName       String           @map("stock_name")
+  quantity        Decimal          @default(0) @db.Decimal(10, 3)
+  rate            Decimal          @default(0) @db.Decimal(10, 2)
+  vendorId        BigInt?          @map("vendor_id")
+  transactionType StockTransactionType @map("transaction_type")
+  referenceId     BigInt?          @map("reference_id")
+  
+  // Audit Trail
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  deletedAt       DateTime?        @map("deleted_at")
+  isActive        Boolean          @default(true) @map("is_active")
+  
+  // Relations
+  vendor          TextileVendor?   @relation(fields: [vendorId], references: [id])
+  
+  @@map("textile_stock")
+  @@index([stockName])
+  @@index([transactionType])
+  @@index([vendorId])
+  @@index([isActive])
+}
+
+enum StockTransactionType {
+  Purchase
+  Sale
+  Adjustment
+  Transfer
+}
+
+// Textile Sales
+model TextileSale {
+  id              BigInt           @id @default(autoincrement())
+  customerName    String           @map("customer_name")
+  invoiceNumber   String           @map("invoice_number")
+  saleDate        DateTime         @map("sale_date")
+  
+  // Financial Data
+  subtotal        Decimal          @default(0) @db.Decimal(15, 2)
+  gstIncluded     Boolean          @default(false) @map("gst_included")
+  gstRate         Decimal?         @db.Decimal(5, 2) @map("gst_rate")
+  gstAmount       Decimal?         @db.Decimal(15, 2) @map("gst_amount")
+  totalAmount     Decimal          @map("total_amount")
+  
+  // Status
+  paymentStatus   PaymentStatus    @default(Paid) @map("payment_status")
+  
+  // Audit Trail
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  deletedAt       DateTime?        @map("deleted_at")
+  isActive        Boolean          @default(true) @map("is_active")
+  
+  // Relations
+  items           TextileSaleItem[]
+  
+  @@map("textile_sales")
+  @@index([customerName])
+  @@index([invoiceNumber])
+  @@index([saleDate])
+  @@index([isActive])
+}
+
+enum PaymentStatus {
+  Paid
+  Partial
+  Unpaid
+}
+
+// Textile Sale Items
+model TextileSaleItem {
+  id          BigInt    @id @default(autoincrement())
+  saleId      BigInt    @map("sale_id")
+  itemName    String    @map("item_name")
+  quantity    Decimal   @db.Decimal(10, 3)
+  rate        Decimal   @db.Decimal(10, 2)
+  total       Decimal   @db.Decimal(15, 2)
+  
+  // Audit Trail
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  isActive    Boolean   @default(true) @map("is_active")
+  
+  // Relations
+  sale        TextileSale @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  
+  @@map("textile_sale_items")
+  @@index([saleId])
+  @@index([itemName])
+}
+
+// Textile Item History (for price tracking)
+model TextileItemHistory {
+  id          BigInt    @id @default(autoincrement())
+  itemName    String    @map("item_name")
+  lastPrice   Decimal   @map("last_price") @db.Decimal(10, 2)
+  vendorId    BigInt?   @map("vendor_id")
+  lastUpdated DateTime  @default(now()) @map("last_updated")
+  
+  // Relations
+  vendor      TextileVendor? @relation(fields: [vendorId], references: [id])
+  
+  @@map("textile_item_history")
+  @@index([itemName])
+}
+
+// Textile Expenses
+model TextileExpense {
+  id            BigInt            @id @default(autoincrement())
+  category      String
+  description   String            @db.Text
+  amount        Decimal           @db.Decimal(15, 2)
+  expenseDate   DateTime          @map("expense_date")
+  paymentMode   PaymentMode       @default(Cash) @map("payment_mode")
+  
+  // Audit Trail
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  deletedAt     DateTime?         @map("deleted_at")
+  isActive      Boolean           @default(true) @map("is_active")
+  
+  @@map("textile_expenses")
+  @@index([category])
+  @@index([expenseDate])
+  @@index([paymentMode])
+  @@index([isActive])
+}
+
+enum PaymentMode {
+  Cash
+  Bank
+  UPI
+  Cheque
+}
+
+// Textile Cash Management
+model TextileCashInHand {
+  id            BigInt    @id @default(autoincrement())
+  cashAmount    Decimal   @map("cash_amount") @db.Decimal(15, 2)
+  lastUpdated   DateTime  @default(now()) @map("last_updated")
+  
+  @@map("textile_cash_in_hand")
+  @@index([lastUpdated])
+}
+
+// ========================================
+// SAAS BUSINESS MODULE
+// ========================================
+
+// SaaS Leads Management
+model SaaSLead {
+  id              BigInt        @id @default(autoincrement())
+  name            String
+  email           String
+  phone           String?
+  company         String?
+  source          String?
+  service         String?
+  notes           String?       @db.Text
+  score           Int           @default(50)
+  status          SaaSLeadStatus @default(New)
+  priority        LeadPriority  @default(Medium)
+  assignedTo      String?       @map("assigned_to")
+  
+  // Dates
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  lastContact     DateTime?     @map("last_contact")
+  nextFollowUp    DateTime?     @map("next_follow_up")
+  
+  // Conversion
+  convertedTo     BigInt?       @map("converted_to")
+  
+  // Audit Trail
+  deletedAt       DateTime?     @map("deleted_at")
+  isActive        Boolean       @default(true) @map("is_active")
+  
+  // Relations
+  activities      SaaSLeadActivity[]
+  deals           SaaSDeal[]
+  
+  @@map("saas_leads")
+  @@index([name])
+  @@index([email])
+  @@index([status])
+  @@index([company])
+  @@index([source])
+  @@index([service])
+  @@index([score])
+  @@index([priority])
+  @@index([assignedTo])
+  @@index([nextFollowUp])
+  @@index([isActive])
+}
+
+enum SaaSLeadStatus {
+  New
+  Qualified
+  Negotiation
+  Converted
+  Lost
+}
+
+enum LeadPriority {
+  Low
+  Medium
+  High
+  Critical
+}
+
+// SaaS Lead Activities
+model SaaSLeadActivity {
+  id            BigInt              @id @default(autoincrement())
+  leadId        BigInt              @map("lead_id")
+  activityType  ActivityType
+  description   String              @db.Text
+  notes         String?             @db.Text
+  outcome       String?
+  userName      String              @default("Current User") @map("user_name")
+  activityDate  DateTime            @default(now()) @map("activity_date")
+  
+  // Relations
+  lead          SaaSLead            @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  
+  @@map("saas_lead_activities")
+  @@index([leadId])
+  @@index([activityType])
+  @@index([activityDate])
+  @@index([userName])
+}
+
+enum ActivityType {
+  call
+  email
+  sms
+  note
+  status_change
+  followup
+}
+
+// SaaS Deal Management
+model SaaSDeal {
+  id                  BigInt        @id @default(autoincrement())
+  leadId              BigInt?       @map("lead_id")
+  clientName          String        @map("client_name")
+  clientEmail         String?       @map("client_email")
+  company             String?
+  dealValue           Decimal       @default(0) @map("deal_value") @db.Decimal(15, 2)
+  service             String?
+  stage               DealStage     @default(Prospecting)
+  probability         Int           @default(10)
+  expectedCloseDate   DateTime?     @map("expected_close_date")
+  notes               String?       @db.Text
+  
+  // Dates
+  createdAt           DateTime      @default(now()) @map("created_at")
+  updatedAt           DateTime      @updatedAt @map("updated_at")
+  
+  // Audit Trail
+  deletedAt           DateTime?     @map("deleted_at")
+  isActive            Boolean       @default(true) @map("is_active")
+  
+  // Relations
+  lead                SaaSLead?     @relation(fields: [leadId], references: [id])
+  activities          SaaSDealActivity[]
+  client              SaaSClient?
+  
+  @@map("saas_deals")
+  @@index([clientName])
+  @@index([clientEmail])
+  @@index([company])
+  @@index([stage])
+  @@index([service])
+  @@index([dealValue])
+  @@index([expectedCloseDate])
+  @@index([isActive])
+}
+
+enum DealStage {
+  Prospecting
+  Qualified
+  Proposal
+  Negotiation
+  ClosedWon
+  ClosedLost
+}
+
+// SaaS Deal Activities
+model SaaSDealActivity {
+  id            BigInt              @id @default(autoincrement())
+  dealId        BigInt              @map("deal_id")
+  activityType  String              @map("activity_type")
+  fromStage     String?             @map("from_stage")
+  toStage       String?             @map("to_stage")
+  notes         String?             @db.Text
+  activityDate  DateTime            @default(now()) @map("activity_date")
+  
+  // Relations
+  deal          SaaSDeal            @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  
+  @@map("saas_deal_activities")
+  @@index([dealId])
+  @@index([activityType])
+  @@index([activityDate])
+}
+
+// SaaS Clients
+model SaaSClient {
+  id            BigInt        @id @default(autoincrement())
+  name          String
+  email         String
+  company       String?
+  dealId        BigInt?       @unique @map("deal_id")
+  service       String?
+  status        ClientStatus  @default(Active)
+  
+  // Dates
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  
+  // Audit Trail
+  deletedAt     DateTime?     @map("deleted_at")
+  isActive      Boolean       @default(true) @map("is_active")
+  
+  // Relations
+  deal          SaaSDeal?     @relation(fields: [dealId], references: [id])
+  subscriptions SaaSSubscription[]
+  
+  @@map("saas_clients")
+  @@index([name])
+  @@index([email])
+  @@index([company])
+  @@index([status])
+  @@index([service])
+  @@index([isActive])
+}
+
+enum ClientStatus {
+  Active
+  Inactive
+  Suspended
+  Cancelled
+}
+
+// SaaS Subscriptions
+model SaaSSubscription {
+  id                    BigInt            @id @default(autoincrement())
+  clientId              BigInt?           @map("client_id")
+  clientName            String            @map("client_name")
+  service               String
+  monthlyAmount         Decimal           @default(0) @map("monthly_amount") @db.Decimal(15, 2)
+  totalContractValue    Decimal?          @map("total_contract_value") @db.Decimal(15, 2)
+  billingCycle          BillingCycle      @default(Monthly) @map("billing_cycle")
+  status                SubscriptionStatus @default(Active)
+  startDate             DateTime          @map("start_date")
+  nextBillingDate       DateTime?         @map("next_billing_date")
+  lastBillingDate       DateTime?         @map("last_billing_date")
+  
+  // Audit Trail
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
+  deletedAt             DateTime?         @map("deleted_at")
+  isActive              Boolean           @default(true) @map("is_active")
+  
+  // Relations
+  client                SaaSClient?       @relation(fields: [clientId], references: [id])
+  billingHistory        SaaSBillingHistory[]
+  revenue               SaaSRevenue[]
+  
+  @@map("saas_subscriptions")
+  @@index([clientName])
+  @@index([service])
+  @@index([status])
+  @@index([nextBillingDate])
+  @@index([isActive])
+}
+
+enum BillingCycle {
+  Monthly
+  Quarterly
+  Annual
+}
+
+enum SubscriptionStatus {
+  Active
+  Inactive
+  Cancelled
+  Suspended
+}
+
+// SaaS Subscription Billing History
+model SaaSBillingHistory {
+  id              BigInt            @id @default(autoincrement())
+  subscriptionId  BigInt            @map("subscription_id")
+  billingDate     DateTime          @map("billing_date")
+  amount          Decimal           @db.Decimal(15, 2)
+  status          BillingStatus     @default(pending)
+  paymentMethod   String?           @map("payment_method")
+  notes           String?           @db.Text
+  
+  // Relations
+  subscription    SaaSSubscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  
+  @@map("saas_billing_history")
+  @@index([subscriptionId])
+  @@index([billingDate])
+  @@index([status])
+}
+
+enum BillingStatus {
+  pending
+  paid
+  failed
+  refunded
+}
+
+// SaaS Revenue
+model SaaSRevenue {
+  id              BigInt        @id @default(autoincrement())
+  amount          Decimal       @db.Decimal(15, 2)
+  source          String
+  clientName      String?       @map("client_name")
+  service         String?
+  subscriptionId  BigInt?       @map("subscription_id")
+  revenueDate     DateTime      @map("revenue_date")
+  notes           String?       @db.Text
+  revenueType     RevenueType   @default(other) @map("revenue_type")
+  status          RevenueStatus @default(confirmed)
+  
+  // Audit Trail
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  deletedAt       DateTime?     @map("deleted_at")
+  isActive        Boolean       @default(true) @map("is_active")
+  
+  // Relations
+  subscription    SaaSSubscription? @relation(fields: [subscriptionId], references: [id])
+  
+  @@map("saas_revenue")
+  @@index([source])
+  @@index([clientName])
+  @@index([service])
+  @@index([revenueDate])
+  @@index([revenueType])
+  @@index([status])
+  @@index([isActive])
+}
+
+enum RevenueType {
+  contract
+  subscription
+  one_time
+  other
+}
+
+enum RevenueStatus {
+  pending
+  confirmed
+  failed
+  refunded
+}
+
+// SaaS Goals
+model SaaSGoal {
+  id            BigInt    @id @default(autoincrement())
+  goalType      String    @map("goal_type")
+  targetAmount  Decimal   @default(0) @map("target_amount") @db.Decimal(15, 2)
+  currentAmount Decimal   @default(0) @map("current_amount") @db.Decimal(15, 2)
+  goalMonth     Int       @map("goal_month")
+  goalYear      Int       @map("goal_year")
+  description   String?   @db.Text
+  
+  // Audit Trail
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+  isActive      Boolean   @default(true) @map("is_active")
+  
+  @@map("saas_goals")
+  @@index([goalType])
+  @@index([goalMonth, goalYear])
+  @@index([isActive])
+}
+
+// SaaS Expenses
+model SaaSExpense {
+  id            BigInt    @id @default(autoincrement())
+  category      String
+  description   String    @db.Text
+  amount        Decimal   @db.Decimal(15, 2)
+  expenseDate   DateTime  @map("expense_date")
+  vendor        String?
+  
+  // Audit Trail
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+  isActive      Boolean   @default(true) @map("is_active")
+  
+  @@map("saas_expenses")
+  @@index([category])
+  @@index([expenseDate])
+  @@index([vendor])
+  @@index([isActive])
+}
+
+// ========================================
+// SYSTEM CONFIGURATION & AUDIT
+// ========================================
+
+// System Settings
+model SystemSetting {
+  id            BigInt        @id @default(autoincrement())
+  settingKey    String        @unique @map("setting_key")
+  settingValue  String?       @map("setting_value")
+  settingType   SettingType   @default(string) @map("setting_type")
+  description   String?       @db.Text
+  updatedBy     String?       @map("updated_by")
+  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
+  
+  @@map("system_settings")
+  @@index([settingKey])
+}
+
+enum SettingType {
+  string
+  number
+  boolean
+  json
+}
+
+// Audit Log for all changes
+model AuditLog {
+  id          BigInt      @id @default(autoincrement())
+  tableName   String      @map("table_name")
+  recordId    BigInt      @map("record_id")
+  action      AuditAction
+  oldValues   Json?       @map("old_values")
+  newValues   Json?       @map("new_values")
+  changedBy   String?     @map("changed_by")
+  changedAt   DateTime    @default(now()) @map("changed_at")
+  
+  @@map("audit_log")
+  @@index([tableName])
+  @@index([recordId])
+  @@index([action])
+  @@index([changedAt])
+  @@index([changedBy])
+}
+
+enum AuditAction {
+  INSERT
+  UPDATE
+  DELETE
+  SOFT_DELETE
+  SOFT_RESTORE
+}

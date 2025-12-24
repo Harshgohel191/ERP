@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Business Manager</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #e2e8f0;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
+            --accent-orange: #f59e0b;
+            --border-color: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            line-height: 1.6; 
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-main);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-blue);
+        }
+
+        .stat-card.revenue::before { background: var(--accent-green); }
+        .stat-card.leads::before { background: var(--accent-purple); }
+        .stat-card.deals::before { background: var(--accent-orange); }
+        .stat-card.goals::before { background: var(--accent-red); }
+
+        .stat-title {
+            font-size: 14px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .stat-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Forms */
+        .form-section {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--accent-blue);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .form-input, .form-select {
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: var(--accent-red);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* Tables */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .table-header {
+            padding: 16px 24px;
+            background: #0f172a;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            padding: 16px;
+            text-align: left;
+            background: #0f172a;
+            color: #94a3b8;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        .table tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-new { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+        .status-qualified { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
+        .status-converted { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .status-prospecting { background: rgba(245, 158, 11, 0.2); color: var(--accent-orange); }
+        .status-qualified-stage { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
+        .status-proposal { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+        .status-negotiation { background: rgba(245, 158, 11, 0.2); color: var(--accent-orange); }
+        .status-closed-won { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .status-closed-lost { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+
+        /* Hidden by default */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Pipeline Stages */
+        .pipeline-stages {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .pipeline-stage {
+            min-width: 150px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .stage-title {
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .deal-card {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        .deal-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+
+        .deal-client {
+            font-size: 14px;
+            color: var(--text-main);
+            margin: 4px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                🚀 SaaS Business Manager
+            </div>
+            <div style="font-size: 14px; color: rgba(255,255,255,0.8);">
+                Complete CRM & Business Intelligence
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="nav-tab" onclick="showTab('leads')">🎯 Leads</button>
+            <button class="nav-tab" onclick="showTab('pipeline')">💼 Pipeline</button>
+            <button class="nav-tab" onclick="showTab('revenue')">💰 Revenue</button>
+            <button class="nav-tab" onclick="showTab('goals')">🎯 Goals</button>
+            <button class="nav-tab" onclick="showTab('services')">⚙️ Services</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid" id="dashboard-stats">
+                <!-- Stats will be loaded here -->
+            </div>
+        </div>
+
+
+        <!-- Leads Tab -->
+        <div id="leads" class="tab-content" style="display: grid; grid-template-columns: 1fr 350px; gap: 20px;">
+            
+            <!-- Left Side - Lead Management -->
+            <div>
+                <!-- Lead Form -->
+                <div class="form-section">
+                    <div class="form-title">Add New Lead</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Name *</label>
+                            <input type="text" id="leadName" class="form-input" placeholder="Lead Name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email *</label>
+                            <input type="email" id="leadEmail" class="form-input" placeholder="email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" id="leadPhone" class="form-input" placeholder="Phone Number">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Company</label>
+                            <input type="text" id="leadCompany" class="form-input" placeholder="Company Name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Source</label>
+                            <select id="leadSource" class="form-select">
+                                <option value="Website">Website</option>
+                                <option value="LinkedIn">LinkedIn</option>
+                                <option value="Referral">Referral</option>
+                                <option value="Cold Call">Cold Call</option>
+                                <option value="Email">Email</option>
+                                <option value="Social Media">Social Media</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Service Interest</label>
+                            <select id="leadService" class="form-select">
+                                <option value="Web Development">Web Development</option>
+                                <option value="Mobile App">Mobile App</option>
+                                <option value="SEO">SEO</option>
+                                <option value="Digital Marketing">Digital Marketing</option>
+                                <option value="Consulting">Consulting</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Score (1-100)</label>
+                            <input type="number" id="leadScore" class="form-input" min="1" max="100" value="50">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">Notes</label>
+                            <input type="text" id="leadNotes" class="form-input" placeholder="Additional notes about the lead">
+                        </div>
+                    </div>
+                    <button class="btn" onclick="addLead()">Add Lead</button>
+                </div>
+
+                <!-- Lead Import Section -->
+                <div class="form-section">
+                    <div class="form-title">Bulk Import Leads</div>
+                    <div class="form-grid">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">Paste CSV Data</label>
+                            <textarea id="csvImportData" class="form-input" rows="6" placeholder="name,email,phone,company,source,service&#10;John Doe,john@example.com,+1234567890,ABC Corp,Website,Web Development&#10;Jane Smith,jane@example.com,+0987654321,XYZ Ltd,LinkedIn,Mobile App"></textarea>
+                            <small style="color: #6b7280; font-size: 12px;">
+                                Format: name,email,phone,company,source,service (first row headers required)
+                            </small>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" onclick="importLeadsFromTextarea()">Import Leads</button>
+                </div>
+
+                <!-- Leads Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">All Leads</div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Company</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Score</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leads-table">
+                            <!-- Leads will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right Side - Lead Details Panel -->
+            <div id="lead-details-panel" class="form-section" style="position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto;">
+                <div class="form-title">Lead Details</div>
+                <div id="lead-details-content">
+                    <div style="text-align: center; color: #6b7280; padding: 40px 20px;">
+                        <div style="font-size: 48px; margin-bottom: 10px;">👆</div>
+                        <p>Select a lead to view details</p>
+                        <p>or add new lead to get started</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pipeline Tab -->
+        <div id="pipeline" class="tab-content">
+            <!-- Deal Form -->
+            <div class="form-section">
+                <div class="form-title">Add New Deal</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Client Name *</label>
+                        <input type="text" id="dealClientName" class="form-input" placeholder="Client Name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Client Email</label>
+                        <input type="email" id="dealClientEmail" class="form-input" placeholder="client@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Company</label>
+                        <input type="text" id="dealCompany" class="form-input" placeholder="Company Name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deal Value *</label>
+                        <input type="number" id="dealValue" class="form-input" placeholder="Deal Value" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Service</label>
+                        <select id="dealService" class="form-select">
+                            <option value="Web Development">Web Development</option>
+                            <option value="Mobile App">Mobile App</option>
+                            <option value="SEO">SEO</option>
+                            <option value="Digital Marketing">Digital Marketing</option>
+                            <option value="Consulting">Consulting</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Stage</label>
+                        <select id="dealStage" class="form-select">
+                            <option value="Prospecting">Prospecting</option>
+                            <option value="Qualified">Qualified</option>
+                            <option value="Proposal">Proposal</option>
+                            <option value="Negotiation">Negotiation</option>
+                            <option value="Closed Won">Closed Won</option>
+                            <option value="Closed Lost">Closed Lost</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Probability (%)</label>
+                        <input type="number" id="dealProbability" class="form-input" min="0" max="100" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expected Close Date</label>
+                        <input type="date" id="dealCloseDate" class="form-input">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label">Notes</label>
+                        <input type="text" id="dealNotes" class="form-input" placeholder="Deal notes">
+                    </div>
+                </div>
+                <button class="btn" onclick="addDeal()">Add Deal</button>
+            </div>
+
+            <!-- Pipeline Stages -->
+            <div class="pipeline-stages" id="pipeline-stages">
+                <!-- Pipeline stages will be loaded here -->
+            </div>
+
+            <!-- Deals Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">All Deals</div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Company</th>
+                            <th>Value</th>
+                            <th>Stage</th>
+                            <th>Probability</th>
+                            <th>Expected Close</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deals-table">
+                        <!-- Deals will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Revenue Tab -->
+        <div id="revenue" class="tab-content">
+            <!-- Revenue Form -->
+            <div class="form-section">
+                <div class="form-title">Record Revenue</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Amount *</label>
+                        <input type="number" id="revenueAmount" class="form-input" placeholder="Revenue Amount" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Source *</label>
+                        <select id="revenueSource" class="form-select">
+                            <option value="Subscription">Subscription</option>
+                            <option value="One-time Payment">One-time Payment</option>
+                            <option value="Consulting">Consulting</option>
+                            <option value="Service Fee">Service Fee</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Client Name</label>
+                        <input type="text" id="revenueClientName" class="form-input" placeholder="Client Name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Service</label>
+                        <input type="text" id="revenueService" class="form-input" placeholder="Service Name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" id="revenueDate" class="form-input">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label">Notes</label>
+                        <input type="text" id="revenueNotes" class="form-input" placeholder="Revenue notes">
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="addRevenue()">Record Revenue</button>
+            </div>
+
+            <!-- Revenue Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Revenue Records</div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Source</th>
+                            <th>Client</th>
+                            <th>Service</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="revenue-table">
+                        <!-- Revenue will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Goals Tab -->
+        <div id="goals" class="tab-content">
+            <!-- Goal Form -->
+            <div class="form-section">
+                <div class="form-title">Set New Goal</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Goal Type *</label>
+                        <select id="goalType" class="form-select">
+                            <option value="Monthly Revenue">Monthly Revenue</option>
+                            <option value="Quarterly Revenue">Quarterly Revenue</option>
+                            <option value="Yearly Revenue">Yearly Revenue</option>
+                            <option value="Leads">Leads</option>
+                            <option value="Deals">Deals</option>
+                            <option value="Conversion Rate">Conversion Rate</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Target *</label>
+                        <input type="number" id="goalTarget" class="form-input" placeholder="Target Amount/Number" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Current Progress</label>
+                        <input type="number" id="goalCurrent" class="form-input" placeholder="Current Progress" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Month</label>
+                        <input type="number" id="goalMonth" class="form-input" min="1" max="12" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Year</label>
+                        <input type="number" id="goalYear" class="form-input" min="2020" max="2030" value="2024">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label">Description</label>
+                        <input type="text" id="goalDescription" class="form-input" placeholder="Goal description">
+                    </div>
+                </div>
+                <button class="btn" onclick="addGoal()">Set Goal</button>
+            </div>
+
+            <!-- Goals Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">All Goals</div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Target</th>
+                            <th>Current</th>
+                            <th>Progress</th>
+                            <th>Month/Year</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="goals-table">
+                        <!-- Goals will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Services Tab -->
+        <div id="services" class="tab-content">
+            <!-- Subscription Form -->
+            <div class="form-section">
+                <div class="form-title">Add Subscription</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Client Name *</label>
+                        <input type="text" id="subClientName" class="form-input" placeholder="Client Name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Service *</label>
+                        <input type="text" id="subService" class="form-input" placeholder="Service Name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Monthly Amount *</label>
+                        <input type="number" id="subMonthlyAmount" class="form-input" placeholder="Monthly Amount" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Billing Cycle</label>
+                        <select id="subBillingCycle" class="form-select">
+                            <option value="Monthly">Monthly</option>
+                            <option value="Quarterly">Quarterly</option>
+                            <option value="Yearly">Yearly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" id="subStartDate" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select id="subStatus" class="form-select">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn" onclick="addSubscription()">Add Subscription</button>
+            </div>
+
+            <!-- Expense Form -->
+            <div class="form-section">
+                <div class="form-title">Record Expense</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Category *</label>
+                        <select id="expenseCategory" class="form-select">
+                            <option value="Marketing">Marketing</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Operations">Operations</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description *</label>
+                        <input type="text" id="expenseDescription" class="form-input" placeholder="Expense description">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Amount *</label>
+                        <input type="number" id="expenseAmount" class="form-input" placeholder="Expense Amount" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" id="expenseDate" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Vendor</label>
+                        <input type="text" id="expenseVendor" class="form-input" placeholder="Vendor name">
+                    </div>
+                </div>
+                <button class="btn btn-danger" onclick="addExpense()">Record Expense</button>
+            </div>
+
+
+            <!-- Billing Management -->
+            <div class="form-section">
+                <div class="form-title">Subscription Billing Management</div>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn" onclick="checkSubscriptionBilling()">Check Due Billings</button>
+                    <button class="btn btn-success" onclick="showBillingHistory()">View Billing History</button>
+                </div>
+                <div id="billing-status" style="background: var(--card-bg); padding: 16px; border-radius: 8px; margin-bottom: 20px; display: none;">
+                    <div id="billing-results"></div>
+                </div>
+            </div>
+
+            <!-- Services Tables -->
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Active Subscriptions</div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Service</th>
+                            <th>Monthly Amount</th>
+                            <th>Status</th>
+                            <th>Next Billing</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subscriptions-table">
+                        <!-- Subscriptions will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Expenses</div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Vendor</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenses-table">
+                        <!-- Expenses will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="saas.js"></script>
+</body>
+</html>

@@ -1,0 +1,443 @@
+{
+  "bills": [
+    {
+      "id": 1766543739789,
+      "vendor": "Test Vendor",
+      "billNo": "TEST001",
+      "billDate": "2025-12-20",
+      "dueDate": "2026-01-19T00:00:00.000Z",
+      "items": [
+        {
+          "name": "Test Fabric",
+          "qty": 10,
+          "rate": 100,
+          "total": 1000
+        }
+      ],
+      "subtotal": 1000,
+      "gstIncluded": false,
+      "gstRate": 0,
+      "gstAmount": 0,
+      "totalAmount": 1000,
+      "paidAmount": 0,
+      "discountAmount": 0,
+      "balance": 1000,
+      "status": "Unpaid",
+      "payments": [],
+      "createdAt": "2025-12-24T02:35:39.789Z"
+    },
+    {
+      "id": 1766543739897,
+      "vendor": "scriptalert(1)/script",
+      "billNo": "TEST",
+      "billDate": "2025-12-20",
+      "dueDate": "2026-01-19T00:00:00.000Z",
+      "items": [
+        {
+          "name": "Test",
+          "qty": 1,
+          "rate": 100,
+          "total": 100
+        }
+      ],
+      "subtotal": 100,
+      "gstIncluded": false,
+      "gstRate": 0,
+      "gstAmount": 0,
+      "totalAmount": 100,
+      "paidAmount": 0,
+      "discountAmount": 0,
+      "balance": 100,
+      "status": "Unpaid",
+      "payments": [],
+      "createdAt": "2025-12-24T02:35:39.897Z"
+    }
+  ],
+  "itemHistory": {
+    "royal georgeete": 200,
+    "silk saree": 234,
+    "cotton fabric": 15,
+    "silk material": 25,
+    "royal": 232,
+    "t1": 203,
+    "t2": 343,
+    "t3": 627,
+    "test fabric": 120,
+    "t4": 922,
+    "test item": 100,
+    "gohel": 424,
+    "wrw": 334,
+    "test": 100
+  },
+  "stock": [
+    {
+      "id": 1765944797312.5942,
+      "type": "Purchase",
+      "name": "Royal georgeete ",
+      "qty": "23",
+      "rate": "200",
+      "vendor": "Shree vinayak ",
+      "date": "2025-12-17T04:13:17.312Z"
+    },
+    {
+      "id": 1765944797312.2046,
+      "type": "Purchase",
+      "name": "Silk saree",
+      "qty": "45",
+      "rate": "234",
+      "vendor": "Shree vinayak ",
+      "date": "2025-12-17T04:13:17.312Z"
+    },
+    {
+      "id": 1765945113070.0828,
+      "type": "Purchase",
+      "name": "Cotton Fabric",
+      "qty": 100,
+      "rate": 15,
+      "vendor": "Test Vendor",
+      "date": "2025-12-17T04:18:33.070Z"
+    },
+    {
+      "id": 1765945113070.521,
+      "type": "Purchase",
+      "name": "Silk Material",
+      "qty": 50,
+      "rate": 25,
+      "vendor": "Test Vendor",
+      "date": "2025-12-17T04:18:33.070Z"
+    },
+    {
+      "id": 1765945436394.5085,
+      "type": "Purchase",
+      "name": "Royal ",
+      "qty": "39",
+      "rate": "9393",
+      "vendor": "Nidhi ",
+      "date": "2025-12-17T04:23:56.394Z"
+    },
+    {
+      "id": 1765945501938.3093,
+      "type": "Purchase",
+      "name": "T1",
+      "qty": "474",
+      "rate": "733",
+      "vendor": "Nidhi ",
+      "date": "2025-12-17T04:25:01.938Z"
+    },
+    {
+      "id": 1765945501938.0789,
+      "type": "Purchase",
+      "name": "T2",
+      "qty": "84",
+      "rate": "723",
+      "vendor": "Nidhi ",
+      "date": "2025-12-17T04:25:01.938Z"
+    },
+    {
+      "id": 1765945501938.1006,
+      "type": "Purchase",
+      "name": "T3",
+      "qty": "76",
+      "rate": "627",
+      "vendor": "Nidhi ",
+      "date": "2025-12-17T04:25:01.938Z"
+    },
+    {
+      "id": 1765947169143.7732,
+      "type": "Purchase",
+      "name": "Test Fabric",
+      "qty": 0,
+      "rate": 100,
+      "vendor": "Nidhi",
+      "date": "2025-12-17T04:52:49.143Z"
+    },
+    {
+      "id": 1765947353057.692,
+      "type": "Purchase",
+      "name": "T1",
+      "qty": "100",
+      "rate": "203",
+      "vendor": "Shree vinayak ",
+      "date": "2025-12-17T04:55:53.057Z"
+    },
+    {
+      "id": 1765947353057.1384,
+      "type": "Purchase",
+      "name": "T2",
+      "qty": "200",
+      "rate": "343",
+      "vendor": "Shree vinayak ",
+      "date": "2025-12-17T04:55:53.057Z"
+    },
+    {
+      "id": 1765947430540.5508,
+      "type": "Purchase",
+      "name": "T1",
+      "qty": "1465",
+      "rate": "203",
+      "vendor": "Shree vinayak ",
+      "date": "2025-12-17T04:57:10.540Z"
+    },
+    {
+      "id": 1765947430540.222,
+      "type": "Purchase",
+      "name": "T2",
+      "qty": "200",
+      "rate": "343",
+      "vendor": "Shree vinayak ",
+      "date": "2025-12-17T04:57:10.540Z"
+    },
+    {
+      "id": 1765947430540.3733,
+      "type": "Purchase",
+      "name": "T3",
+      "qty": "44",
+      "rate": "627",
+      "vendor": "Shree vinayak ",
+      "date": "2025-12-17T04:57:10.540Z"
+    },
+    {
+      "id": 1765947430540.1565,
+      "type": "Purchase",
+      "name": "T4",
+      "qty": "89",
+      "rate": "922",
+      "vendor": "Shree vinayak ",
+      "date": "2025-12-17T04:57:10.540Z"
+    },
+    {
+      "id": 1766239519400.9614,
+      "type": "Purchase",
+      "name": "Gohel",
+      "qty": "2234",
+      "rate": "424",
+      "vendor": "Shree vinayak ",
+      "date": "2025-12-20T14:05:19.400Z"
+    },
+    {
+      "id": 1766239519400.0576,
+      "type": "Purchase",
+      "name": "wrw ",
+      "qty": "43",
+      "rate": "334",
+      "vendor": "Shree vinayak ",
+      "date": "2025-12-20T14:05:19.400Z"
+    },
+    {
+      "id": 1766240014799.7441,
+      "type": "Purchase",
+      "name": "Test Item",
+      "qty": 50,
+      "rate": 50,
+      "vendor": "Test Vendor GST",
+      "date": "2025-12-20T14:13:34.799Z"
+    },
+    {
+      "id": 1766452218224.1504,
+      "type": "Purchase",
+      "name": "Test Fabric",
+      "qty": 10,
+      "rate": 100,
+      "vendor": "Test Vendor",
+      "date": "2025-12-23T01:10:18.224Z"
+    },
+    {
+      "id": 1766452218311.6099,
+      "type": "Purchase",
+      "name": "Test",
+      "qty": 1,
+      "rate": 100,
+      "vendor": "scriptalert(1)/script",
+      "date": "2025-12-23T01:10:18.311Z"
+    },
+    {
+      "id": 1766543739789.527,
+      "type": "Purchase",
+      "name": "Test Fabric",
+      "qty": 10,
+      "rate": 100,
+      "vendor": "Test Vendor",
+      "date": "2025-12-24T02:35:39.789Z"
+    },
+    {
+      "id": 1766543739897.177,
+      "type": "Purchase",
+      "name": "Test",
+      "qty": 1,
+      "rate": 100,
+      "vendor": "scriptalert(1)/script",
+      "date": "2025-12-24T02:35:39.897Z"
+    }
+  ],
+  "cashInHand": -268698,
+  "expenses": [
+    {
+      "id": 1766543739835,
+      "category": "Rent",
+      "description": "Monthly rent",
+      "amount": 5000,
+      "date": "2025-12-20",
+      "mode": "Cash",
+      "dateCreated": "2025-12-24T02:35:39.835Z"
+    }
+  ],
+  "sales": [
+    {
+      "id": 1766543739804,
+      "customer": "Test Customer",
+      "invoiceNo": "INV001",
+      "saleDate": "2025-12-20",
+      "items": [
+        {
+          "name": "Test Fabric",
+          "qty": 5,
+          "rate": 120,
+          "total": 600
+        }
+      ],
+      "subtotal": 600,
+      "gstIncluded": false,
+      "gstRate": 0,
+      "gstAmount": 0,
+      "totalAmount": 600,
+      "paymentStatus": "Paid",
+      "date": "2025-12-24T02:35:39.804Z"
+    }
+  ],
+  "greyStock": [
+    {
+      "id": 1765737830446,
+      "mainLot": "23",
+      "subLotNo": "23-2",
+      "quality": "4",
+      "takaList": [
+        "50",
+        "50",
+        "50",
+        "50",
+        "50",
+        "50",
+        "50",
+        "50",
+        "50",
+        "50",
+        "50",
+        "50"
+      ],
+      "totalTakas": 12,
+      "totalMeters": "600.00",
+      "rate": 10,
+      "vendor": "Dhameliya",
+      "date": "2025-12-14T18:43:50.445Z",
+      "status": "In Godown"
+    }
+  ],
+  "millProcess": [
+    {
+      "id": 1765737973792,
+      "greyDetails": {
+        "id": 1765737830445,
+        "mainLot": "23",
+        "subLotNo": "23-1",
+        "quality": "4",
+        "takaList": [
+          "100",
+          "100",
+          "100",
+          "100",
+          "100",
+          "100",
+          "100",
+          "100",
+          "100",
+          "100",
+          "100",
+          "100"
+        ],
+        "totalTakas": 12,
+        "totalMeters": "1200.00",
+        "rate": 10,
+        "vendor": "Dhameliya",
+        "date": "2025-12-14T18:43:50.445Z",
+        "status": "In Godown"
+      },
+      "millName": "prerna",
+      "sentDate": "2025-12-14T18:46:13.792Z",
+      "status": "Processing"
+    },
+    {
+      "id": 1765737993841,
+      "greyDetails": {
+        "id": 1765657747973,
+        "lotNo": "1",
+        "type": "Waitless 6.500",
+        "totalTakas": 8,
+        "takaList": [
+          "87",
+          "87",
+          "89",
+          "98",
+          "97",
+          "98",
+          "96",
+          "78"
+        ],
+        "totalMeters": "730.00",
+        "rate": 16.5,
+        "vendor": "Dhameliya",
+        "date": "2025-12-13T20:29:07.973Z",
+        "status": "In Stock"
+      },
+      "millName": "rqjni",
+      "sentDate": "2025-12-14T18:46:33.841Z",
+      "status": "Processing"
+    }
+  ],
+  "readyStock": [
+    {
+      "id": 1765737697703,
+      "type": "Direct",
+      "name": "878",
+      "qty": 878,
+      "costPrice": 878,
+      "date": "2025-12-14T18:41:37.703Z",
+      "history": "Bought from Shree Vinayak Fashion (Bill 77)"
+    },
+    {
+      "id": 1765737742058,
+      "type": "Direct",
+      "name": "jehbjv",
+      "qty": 100,
+      "costPrice": 199,
+      "date": "2025-12-14T18:42:22.058Z",
+      "history": "Bought from Shree Vinayak Fashion (Bill 24)"
+    },
+    {
+      "id": 1765737887657,
+      "type": "Saree",
+      "name": "viscos",
+      "qty": 72,
+      "costPrice": 235.96,
+      "history": "Lot: undefined",
+      "date": "2025-12-14T18:44:47.657Z"
+    }
+  ],
+  "vendors": [
+    {
+      "id": 1765657725571,
+      "name": "Dhameliya",
+      "type": "Grey Purchase",
+      "amount": 12045,
+      "dueDate": "2026-01-12T20:28:45.571Z",
+      "status": "Unpaid"
+    },
+    {
+      "id": 1765657747973,
+      "name": "Dhameliya",
+      "type": "Grey Purchase",
+      "amount": 12045,
+      "dueDate": "2026-01-12T20:29:07.973Z",
+      "status": "Unpaid"
+    }
+  ]
+}
