@@ -1,24 +1,20 @@
 'use client'
 
-
 import { useState, useEffect } from 'react'
 import { DndContext, DragEndEvent } from '@dnd-kit/core'
 import { Sidebar } from '@/components/Sidebar'
 import { KanbanBoard } from '@/components/KanbanBoard'
-import { DashboardHeader } from '@/components/DashboardHeader'
 import { LeadDetailsPanel } from '@/components/LeadDetailsPanel'
-import { ReportsPanel } from '@/components/ReportsPanel'
 import { PipelineStats } from '@/components/PipelineStats'
-import { RevenueAnalytics } from '@/components/RevenueAnalytics'
 import { AddLeadModal } from '@/components/AddLeadModal'
+import { BulkImportLeads } from '@/components/BulkImportLeads'
 import { Lead } from '@/types/lead'
 
-
-export default function DashboardPage() {
+export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([])
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
-  const [showReports, setShowReports] = useState(false)
   const [showAddLeadModal, setShowAddLeadModal] = useState(false)
+  const [showBulkImportModal, setShowBulkImportModal] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
   // Load leads on component mount
@@ -112,7 +108,6 @@ export default function DashboardPage() {
     setSelectedLead(null)
   }
 
-
   const handleUpdateLead = (updatedLead: Lead) => {
     setLeads(prev => prev.map(l => l.id === updatedLead.id ? updatedLead : l))
     setSelectedLead(updatedLead)
@@ -122,9 +117,18 @@ export default function DashboardPage() {
     setShowAddLeadModal(true)
   }
 
+  const handleBulkImport = () => {
+    setShowBulkImportModal(true)
+  }
+
   const handleLeadCreated = (newLead: Lead) => {
     setLeads(prev => [newLead, ...prev])
     setShowAddLeadModal(false)
+  }
+
+  const handleBulkImportComplete = (importedLeads: Lead[]) => {
+    setLeads(prev => [...importedLeads, ...prev])
+    setShowBulkImportModal(false)
   }
 
   if (isLoading) {
@@ -140,12 +144,29 @@ export default function DashboardPage() {
       <Sidebar />
       
       <div className="flex-1 flex flex-col">
-
-
-        <DashboardHeader 
-          onShowReports={() => setShowReports(!showReports)}
-          showReports={showReports}
-        />
+        {/* Leads Header with Add Lead and Bulk Import buttons */}
+        <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Leads Management</h1>
+              <p className="text-sm text-gray-600">Manage and track your sales leads</p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <button 
+                onClick={handleBulkImport}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+              >
+                <span>Bulk Import</span>
+              </button>
+              <button 
+                onClick={handleAddLead}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+              >
+                <span>Add New Lead</span>
+              </button>
+            </div>
+          </div>
+        </div>
         
         <div className="flex-1 flex">
           <div className="flex-1">
@@ -168,18 +189,7 @@ export default function DashboardPage() {
               onUpdate={handleUpdateLead}
             />
           )}
-          
-
-          {showReports && (
-            <ReportsPanel 
-              leads={leads}
-              onClose={() => setShowReports(false)}
-            />
-          )}
         </div>
-        
-        {/* Revenue Analytics Section */}
-        <RevenueAnalytics leads={leads} />
       </div>
       
       {/* Add Lead Modal */}
@@ -187,6 +197,13 @@ export default function DashboardPage() {
         isOpen={showAddLeadModal}
         onClose={() => setShowAddLeadModal(false)}
         onSave={handleLeadCreated}
+      />
+
+      {/* Bulk Import Modal */}
+      <BulkImportLeads
+        isOpen={showBulkImportModal}
+        onClose={() => setShowBulkImportModal(false)}
+        onImportComplete={handleBulkImportComplete}
       />
     </div>
   )

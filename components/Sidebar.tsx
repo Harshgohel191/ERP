@@ -69,17 +69,15 @@ export function Sidebar() {
         </ul>
       </nav>
 
+
       <div className="px-4 pb-4">
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-4 text-white">
           <h3 className="text-sm font-medium">Quick Actions</h3>
-          <p className="text-xs mt-1 opacity-90">Add new lead or deal</p>
+          <p className="text-xs mt-1 opacity-90">Navigate to leads section</p>
           <div className="mt-3 space-y-2">
-            <button className="w-full bg-white bg-opacity-20 hover:bg-opacity-30 text-xs py-2 px-3 rounded-md transition-colors">
-              + New Lead
-            </button>
-            <button className="w-full bg-white bg-opacity-20 hover:bg-opacity-30 text-xs py-2 px-3 rounded-md transition-colors">
-              + New Deal
-            </button>
+            <Link href="/dashboard" className="block w-full text-center bg-white bg-opacity-20 hover:bg-opacity-30 text-xs py-2 px-3 rounded-md transition-colors">
+              View Dashboard
+            </Link>
           </div>
         </div>
       </div>

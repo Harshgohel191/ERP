@@ -1,30 +1,43 @@
-// --- 1. SMART CONNECTION (Phone & Laptop Both) ---
-// Yahan koi URL nahi likhna. Bas socket() likho, ye khud samajh jayega.
-const socket = io(); 
 
-// API ke aage bhi koi http://localhost nahi lagana
-const apiUrl = '/api/finance';
+// --- 1. LOCAL STORAGE DATA MANAGEMENT ---
+// Data ko localStorage se load aur save karenge
+const DATA_KEY = 'diamond_transactions';
 
-document.addEventListener('DOMContentLoaded', fetchTransactions);
-
-// --- 2. LIVE SYNC ---
-socket.on('data_update', () => {
-    console.log("New Entry Detected! Refreshing...");
+document.addEventListener('DOMContentLoaded', () => {
     fetchTransactions();
+    setupEventListeners();
 });
+
+
+// --- 2. LOCAL STORAGE FUNCTIONS ---
+function loadTransactions() {
+    const stored = localStorage.getItem(DATA_KEY);
+    return stored ? JSON.parse(stored) : [];
+}
+
+function saveTransactions(transactions) {
+    localStorage.setItem(DATA_KEY, JSON.stringify(transactions));
+}
+
+function setupEventListeners() {
+    // Add transaction form listener
+    const form = document.querySelector('.input-group');
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            addTransaction();
+        });
+    }
+}
 
 // --- 3. FETCH LOGIC ---
 async function fetchTransactions() {
     try {
-        const res = await fetch(apiUrl); // Ye ab Phone par bhi chalega
-        if (!res.ok) throw new Error("Server Error");
-        
-        const data = await res.json();
-        renderDashboard(data);
+        const transactions = loadTransactions();
+        renderDashboard(transactions);
     } catch (error) {
-        console.error("Connection Failed:", error);
-        // Agar phone par error aaye to user ko batao
-        alert("Server se connect nahi ho pa raha. Check karein Laptop ON hai?");
+        console.error("Data load failed:", error);
+        alert("Data load karne mein error aaya!");
     }
 }
 
@@ -121,7 +134,8 @@ function renderDashboard(transactions) {
     }
 }
 
-async function addTransaction() {
+
+function addTransaction() {
     const type = document.getElementById('txnType').value;
     const category = document.getElementById('txnCategory').value;
     const desc = document.getElementById('txnDesc').value;
@@ -130,26 +144,45 @@ async function addTransaction() {
 
     if(!amount) return;
 
-    await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, category, desc, amount, status })
-    });
+    const transactions = loadTransactions();
+    const newTxn = {
+        id: Date.now(),
+        type,
+        category,
+        desc,
+        amount: parseFloat(amount),
+        status,
+        date: new Date().toISOString()
+    };
+    
+    transactions.push(newTxn);
+    saveTransactions(transactions);
     
     document.getElementById('txnDesc').value = '';
     document.getElementById('txnAmount').value = '';
-    // fetchTransactions(); // Socket khud update karega
+    fetchTransactions();
 }
 
-async function markReceived(id) {
+
+function markReceived(id) {
     if(confirm("Confirm payment received?")) {
-        await fetch(`${apiUrl}/${id}`, { method: 'PATCH' });
+        const transactions = loadTransactions();
+        const txn = transactions.find(t => t.id === id);
+        if (txn) {
+            txn.status = 'Received';
+            saveTransactions(transactions);
+            fetchTransactions();
+        }
     }
 }
 
-async function deleteTxn(id) {
+
+function deleteTxn(id) {
     if(confirm("Delete entry?")) {
-        await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+        const transactions = loadTransactions();
+        const filtered = transactions.filter(t => t.id !== id);
+        saveTransactions(filtered);
+        fetchTransactions();
     }
 }
 

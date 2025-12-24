@@ -100,13 +100,19 @@ class SaaSManager {
         return 'var(--accent-red)';
     }
 
+
     async loadData() {
         try {
-            const response = await fetch('/api/saas/data');
+            const response = await fetch('/saas_data.json');
             this.data = await response.json();
             await this.loadStats();
         } catch (error) {
             console.error('Error loading data:', error);
+            // If JSON file doesn't exist, try to load from local storage or use empty data
+            const savedData = localStorage.getItem('saasData');
+            if (savedData) {
+                this.data = JSON.parse(savedData);
+            }
         }
     }
 

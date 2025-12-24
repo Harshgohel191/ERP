@@ -1,23 +1,21 @@
 'use client'
 
+
 import { 
   Bell, 
   Search, 
   Settings, 
-  Plus, 
-  BarChart3,
-  X
+  BarChart3
 } from 'lucide-react'
 
 
 interface DashboardHeaderProps {
   onShowReports: () => void
   showReports: boolean
-  onAddLead: () => void
 }
 
 
-export function DashboardHeader({ onShowReports, showReports, onAddLead }: DashboardHeaderProps) {
+export function DashboardHeader({ onShowReports, showReports }: DashboardHeaderProps) {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -32,16 +30,8 @@ export function DashboardHeader({ onShowReports, showReports, onAddLead }: Dashb
             />
           </div>
           
-          <div className="flex items-center space-x-2">
 
-            <button 
-              onClick={onAddLead}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Lead</span>
-            </button>
-            
+          <div className="flex items-center space-x-2">
             <button 
               onClick={onShowReports}
               className={`px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors ${
