@@ -27,9 +27,11 @@ test_api() {
     echo -n "Testing $test_name... "
     
     if [ "$method" = "GET" ]; then
-        response=$(curl -s -w "%{http_code}" http://localhost:3000$endpoint)
+
+        response=$(curl -s -w "%{http_code}" http://localhost:3005$endpoint)
     else
-        response=$(curl -s -w "%{http_code}" -X $method -H "Content-Type: application/json" -d "$data" http://localhost:3000$endpoint)
+
+        response=$(curl -s -w "%{http_code}" -X $method -H "Content-Type: application/json" -d "$data" http://localhost:3005$endpoint)
     fi
     
     http_code="${response: -3}"
@@ -67,7 +69,8 @@ echo "==================="
 
 # Get current data for verification
 echo "Getting current system data..."
-current_data=$(curl -s http://localhost:3000/api/textile/data)
+
+current_data=$(curl -s http://localhost:3005/api/textile/data)
 echo "$current_data" > /tmp/test_data.json
 
 # Check if data contains expected fields
@@ -104,7 +107,8 @@ echo "========================"
 
 # Test stats calculation
 echo "Testing dashboard statistics..."
-stats=$(curl -s http://localhost:3000/api/textile/stats)
+
+stats=$(curl -s http://localhost:3005/api/textile/stats)
 echo "$stats"
 
 echo -n "Verifying expense total in stats... "
@@ -132,7 +136,8 @@ echo "=================="
 # Test input sanitization
 echo -n "Testing XSS protection... "
 xss_test='{"vendor":"<script>alert(1)</script>","billNo":"TEST","billDate":"2025-12-20","items":[{"name":"Test","qty":1,"rate":100,"total":100}]}'
-xss_response=$(curl -s -w "%{http_code}" -X POST -H "Content-Type: application/json" -d "$xss_test" http://localhost:3000/api/textile/purchase/save)
+
+xss_response=$(curl -s -w "%{http_code}" -X POST -H "Content-Type: application/json" -d "$xss_test" http://localhost:3005/api/textile/purchase/save)
 xss_code="${xss_response: -3}"
 
 if [ "$xss_code" = "200" ] || [ "$xss_code" = "201" ]; then
@@ -159,7 +164,8 @@ echo "Testing web interface availability..."
 
 # Test main pages
 echo -n "Testing /textile.html... "
-if curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/textile.html | grep -q "200"; then
+
+if curl -s -o /dev/null -w "%{http_code}" http://localhost:3005/textile.html | grep -q "200"; then
     echo -e "${GREEN}✅ PASS${NC}"
     ((PASS++))
 else
@@ -168,7 +174,8 @@ else
 fi
 
 echo -n "Testing /dashboard.html... "
-if curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/dashboard.html | grep -q "200"; then
+
+if curl -s -o /dev/null -w "%{http_code}" http://localhost:3005/dashboard.html | grep -q "200"; then
     echo -e "${GREEN}✅ PASS${NC}"
     ((PASS++))
 else
@@ -177,7 +184,8 @@ else
 fi
 
 echo -n "Testing /index.html... "
-if curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/index.html | grep -q "200"; then
+
+if curl -s -o /dev/null -w "%{http_code}" http://localhost:3005/index.html | grep -q "200"; then
     echo -e "${GREEN}✅ PASS${NC}"
     ((PASS++))
 else

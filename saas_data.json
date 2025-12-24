@@ -112,6 +112,42 @@
       "createdAt": "2025-12-23T09:23:28.785Z",
       "lastContact": "2025-12-23T09:23:28.785Z",
       "nextFollowUp": null
+    },
+    {
+      "id": 1766543569008,
+      "name": "Test Lead",
+      "email": "test@example.com",
+      "phone": "",
+      "company": "TestCorp",
+      "source": "API Test",
+      "service": "Testing",
+      "notes": "",
+      "score": 75,
+      "status": "New",
+      "assignedTo": null,
+      "createdAt": "2025-12-24T02:32:49.008Z",
+      "lastContact": "2025-12-24T02:32:49.008Z",
+      "nextFollowUp": null,
+      "activities": [],
+      "conversationHistory": []
+    },
+    {
+      "id": 1766545559299,
+      "name": "Test Lead",
+      "email": "test@example.com",
+      "phone": "",
+      "company": "TestCorp",
+      "source": "API Test",
+      "service": "Testing",
+      "notes": "",
+      "score": 75,
+      "status": "New",
+      "assignedTo": null,
+      "createdAt": "2025-12-24T03:05:59.299Z",
+      "lastContact": "2025-12-24T03:05:59.299Z",
+      "nextFollowUp": null,
+      "activities": [],
+      "conversationHistory": []
     }
   ],
   "deals": [
@@ -165,6 +201,34 @@
       "notes": "kjdk",
       "createdAt": "2025-12-23T17:37:08.908Z",
       "activities": []
+    },
+    {
+      "id": 1766543569049,
+      "clientName": "Test Client",
+      "clientEmail": "",
+      "company": "TestCorp",
+      "value": 25000,
+      "service": "API Testing",
+      "stage": "Proposal",
+      "probability": 60,
+      "expectedCloseDate": "2026-01-23",
+      "notes": "",
+      "createdAt": "2025-12-24T02:32:49.049Z",
+      "activities": []
+    },
+    {
+      "id": 1766545559327,
+      "clientName": "Test Client",
+      "clientEmail": "",
+      "company": "TestCorp",
+      "value": 25000,
+      "service": "API Testing",
+      "stage": "Proposal",
+      "probability": 60,
+      "expectedCloseDate": "2026-01-23",
+      "notes": "",
+      "createdAt": "2025-12-24T03:05:59.327Z",
+      "activities": []
     }
   ],
   "subscriptions": [
@@ -216,6 +280,26 @@
       "year": 2024,
       "description": "Test goal",
       "createdAt": "2025-12-23T01:32:18.480Z"
+    },
+    {
+      "id": 1766543569116,
+      "type": "Monthly Revenue",
+      "target": 50000,
+      "current": 5000,
+      "month": 12,
+      "year": 2024,
+      "description": "Test goal",
+      "createdAt": "2025-12-24T02:32:49.116Z"
+    },
+    {
+      "id": 1766545559371,
+      "type": "Monthly Revenue",
+      "target": 50000,
+      "current": 5000,
+      "month": 12,
+      "year": 2024,
+      "description": "Test goal",
+      "createdAt": "2025-12-24T03:05:59.371Z"
     }
   ],
   "team": [],
@@ -325,6 +409,26 @@
       "notes": "Initial contract value - Monthly billing",
       "type": "contract",
       "createdAt": "2025-12-23T17:37:46.942Z"
+    },
+    {
+      "id": 1766543569085,
+      "amount": 5000,
+      "source": "API Test",
+      "clientName": "Test Client",
+      "service": "Testing",
+      "date": "2025-12-24",
+      "notes": "",
+      "createdAt": "2025-12-24T02:32:49.085Z"
+    },
+    {
+      "id": 1766545559358,
+      "amount": 5000,
+      "source": "API Test",
+      "clientName": "Test Client",
+      "service": "Testing",
+      "date": "2025-12-24",
+      "notes": "",
+      "createdAt": "2025-12-24T03:05:59.358Z"
     }
   ],
   "expenses": [],

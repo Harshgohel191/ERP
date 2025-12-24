@@ -1,5 +1,3 @@
-
-
 // --- FIXED DATA INTEGRATION ---
 // Now connects to actual database sources instead of just localStorage
 
@@ -50,7 +48,6 @@ async function loadAllBusinessData() {
         renderDashboard(localTransactions);
     }
 }
-
 
 // --- PROCESS DATA FROM ALL BUSINESSES ---
 function processBusinessData(diamondData, textileData, saasData) {
@@ -168,7 +165,7 @@ function processBusinessData(diamondData, textileData, saasData) {
     return allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
-
+// --- ENHANCED DASHBOARD RENDERING ---
 function renderDashboard(transactions) {
     const tbody = document.getElementById('txnList');
     tbody.innerHTML = '';
@@ -297,8 +294,7 @@ function renderDashboard(transactions) {
     console.log('Business Summary:', businessStats);
 }
 
-
-
+// --- ADD TRANSACTION (Saves to Diamond business by default) ---
 async function addTransaction() {
     const type = document.getElementById('txnType').value;
     const category = document.getElementById('txnCategory').value;
@@ -336,19 +332,88 @@ async function addTransaction() {
     }
 }
 
+// --- DELETE TRANSACTION ---
+async function deleteTxn(id) {
+    if(!confirm("Delete this transaction?")) return;
 
+    try {
+        // Extract business type and ID from the transaction ID
+        const [business, type, transactionId] = id.split('_');
+        
+        let deleteUrl = '';
+        let deleteMethod = 'DELETE';
+        
+        if (business === 'diamond') {
+            deleteUrl = `${API_BASE}/api/finance/${transactionId}`;
+        } else if (business === 'textile') {
+            if (type === 'bill') {
+                deleteUrl = `${API_BASE}/api/textile/bill/${transactionId}`;
+            } else if (type === 'sale') {
+                deleteUrl = `${API_BASE}/api/textile/sale/${transactionId}`;
+            } else if (type === 'expense') {
+                deleteUrl = `${API_BASE}/api/textile/expense/${transactionId}`;
+            }
+        } else if (business === 'saas') {
+            if (type === 'revenue') {
+                // For SaaS revenue, we might need a different approach
+                console.log('SaaS revenue deletion not implemented yet');
+                return;
+            } else if (type === 'expense') {
+                console.log('SaaS expense deletion not implemented yet');
+                return;
+            }
+        }
+        
+        if (deleteUrl) {
+            const response = await fetch(deleteUrl, { method: deleteMethod });
+            if (response.ok) {
+                loadAllBusinessData(); // Reload data
+            } else {
+                alert('Failed to delete transaction');
+            }
+        } else {
+            alert('Cannot delete this transaction type');
+        }
+    } catch (error) {
+        console.error('Error deleting transaction:', error);
+        alert('Error deleting transaction');
+    }
+}
 
+// --- MARK PAYMENT RECEIVED (For pending transactions) ---
+async function markReceived(id) {
+    if(!confirm("Confirm payment received?")) return;
 
+    try {
+        const [business, type, transactionId] = id.split('_');
+        
+        if (business === 'diamond') {
+            // Update Diamond transaction status
+            const response = await fetch(`${API_BASE}/api/finance/${transactionId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'Received' })
+            });
+            
+            if (response.ok) {
+                loadAllBusinessData();
+            }
+        }
+        // Add similar logic for other businesses as needed
+    } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Error updating payment status');
+    }
+}
 
-
+// --- UTILITY FUNCTIONS ---
 function toggleStatus() {
     const type = document.getElementById('txnType').value;
     const statusEl = document.getElementById('txnStatus');
     if(statusEl) statusEl.style.display = type === 'income' ? 'block' : 'none';
 }
 
-
-// --- FALLBACK FUNCTIONS FOR LOCALSTORAGE (if needed) ---
+// Fallback functions for localStorage (if needed)
 function loadTransactions() {
     const stored = localStorage.getItem('diamond_transactions');
     return stored ? JSON.parse(stored) : [];

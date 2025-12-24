@@ -1,5 +1,58 @@
 {
-  "bills": [],
+  "bills": [
+    {
+      "id": 1766543739789,
+      "vendor": "Test Vendor",
+      "billNo": "TEST001",
+      "billDate": "2025-12-20",
+      "dueDate": "2026-01-19T00:00:00.000Z",
+      "items": [
+        {
+          "name": "Test Fabric",
+          "qty": 10,
+          "rate": 100,
+          "total": 1000
+        }
+      ],
+      "subtotal": 1000,
+      "gstIncluded": false,
+      "gstRate": 0,
+      "gstAmount": 0,
+      "totalAmount": 1000,
+      "paidAmount": 0,
+      "discountAmount": 0,
+      "balance": 1000,
+      "status": "Unpaid",
+      "payments": [],
+      "createdAt": "2025-12-24T02:35:39.789Z"
+    },
+    {
+      "id": 1766543739897,
+      "vendor": "scriptalert(1)/script",
+      "billNo": "TEST",
+      "billDate": "2025-12-20",
+      "dueDate": "2026-01-19T00:00:00.000Z",
+      "items": [
+        {
+          "name": "Test",
+          "qty": 1,
+          "rate": 100,
+          "total": 100
+        }
+      ],
+      "subtotal": 100,
+      "gstIncluded": false,
+      "gstRate": 0,
+      "gstAmount": 0,
+      "totalAmount": 100,
+      "paidAmount": 0,
+      "discountAmount": 0,
+      "balance": 100,
+      "status": "Unpaid",
+      "payments": [],
+      "createdAt": "2025-12-24T02:35:39.897Z"
+    }
+  ],
   "itemHistory": {
     "royal georgeete": 200,
     "silk saree": 234,
@@ -93,7 +146,7 @@
       "id": 1765947169143.7732,
       "type": "Purchase",
       "name": "Test Fabric",
-      "qty": 5,
+      "qty": 0,
       "rate": 100,
       "vendor": "Nidhi",
       "date": "2025-12-17T04:52:49.143Z"
@@ -196,11 +249,61 @@
       "rate": 100,
       "vendor": "scriptalert(1)/script",
       "date": "2025-12-23T01:10:18.311Z"
+    },
+    {
+      "id": 1766543739789.527,
+      "type": "Purchase",
+      "name": "Test Fabric",
+      "qty": 10,
+      "rate": 100,
+      "vendor": "Test Vendor",
+      "date": "2025-12-24T02:35:39.789Z"
+    },
+    {
+      "id": 1766543739897.177,
+      "type": "Purchase",
+      "name": "Test",
+      "qty": 1,
+      "rate": 100,
+      "vendor": "scriptalert(1)/script",
+      "date": "2025-12-24T02:35:39.897Z"
     }
   ],
-  "cashInHand": -264298,
-  "expenses": [],
-  "sales": [],
+  "cashInHand": -268698,
+  "expenses": [
+    {
+      "id": 1766543739835,
+      "category": "Rent",
+      "description": "Monthly rent",
+      "amount": 5000,
+      "date": "2025-12-20",
+      "mode": "Cash",
+      "dateCreated": "2025-12-24T02:35:39.835Z"
+    }
+  ],
+  "sales": [
+    {
+      "id": 1766543739804,
+      "customer": "Test Customer",
+      "invoiceNo": "INV001",
+      "saleDate": "2025-12-20",
+      "items": [
+        {
+          "name": "Test Fabric",
+          "qty": 5,
+          "rate": 120,
+          "total": 600
+        }
+      ],
+      "subtotal": 600,
+      "gstIncluded": false,
+      "gstRate": 0,
+      "gstAmount": 0,
+      "totalAmount": 600,
+      "paymentStatus": "Paid",
+      "date": "2025-12-24T02:35:39.804Z"
+    }
+  ],
   "greyStock": [
     {
       "id": 1765737830446,

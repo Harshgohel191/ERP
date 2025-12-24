@@ -3,7 +3,8 @@
 echo "🚀 SaaS Business Management System - API Test Suite"
 echo "=================================================="
 
-BASE_URL="http://localhost:3000"
+
+BASE_URL="http://localhost:3005"
 
 # Test 1: Check if server is running
 echo "✅ Testing Server Connection..."
@@ -97,5 +98,6 @@ echo "   ✓ Goal Setting"
 echo "   ✓ Dashboard Statistics"
 echo "   ✓ Service Management"
 echo ""
-echo "🌐 Access your SaaS system at: http://localhost:3000"
+
+echo "🌐 Access your SaaS system at: http://localhost:3005"
 echo "📱 Click '🚀 SaaS' to enter the business management interface"
