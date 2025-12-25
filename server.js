@@ -60,14 +60,40 @@ app.get('/', (req, res) => {
 // --- DIAMOND LOGIC (JSON - TEMPORARY) ---
 function loadDiamondData() {
     try {
+        // Log file path for debugging (especially on AWS)
+        console.log(`[Diamond] Loading data from: ${DIAMOND_FILE}`);
+        console.log(`[Diamond] Current working directory: ${process.cwd()}`);
+        console.log(`[Diamond] __dirname: ${__dirname}`);
+        
+        // Check if file exists
         if (fs.existsSync(DIAMOND_FILE)) {
+            console.log(`[Diamond] File exists, reading...`);
+            
+            // Check file permissions
+            try {
+                fs.accessSync(DIAMOND_FILE, fs.constants.R_OK);
+                console.log(`[Diamond] File is readable`);
+            } catch (permError) {
+                console.error(`[Diamond] File permission error:`, permError.message);
+                throw new Error(`Cannot read Diamond data file: ${permError.message}`);
+            }
+            
             const data = fs.readFileSync(DIAMOND_FILE, 'utf8');
-            const parsed = JSON.parse(data);
-            // Ensure it's always an array
-            if (!Array.isArray(parsed)) {
-                console.warn('Diamond data is not an array, converting...');
+            
+            if (!data || data.trim() === '') {
+                console.warn('[Diamond] File is empty, returning empty array');
                 return [];
             }
+            
+            const parsed = JSON.parse(data);
+            
+            // Ensure it's always an array
+            if (!Array.isArray(parsed)) {
+                console.warn('[Diamond] Data is not an array, converting...');
+                return [];
+            }
+            
+            console.log(`[Diamond] Raw data loaded: ${parsed.length} entries`);
             
             // Normalize and validate all entries
             const normalized = parsed.map((entry, index) => {
@@ -88,56 +114,113 @@ function loadDiamondData() {
                     
                     // Validate entry
                     if (!normalizedEntry.description || normalizedEntry.description.trim() === '') {
-                        console.warn(`Entry ${normalizedEntry.id} has no description, skipping`);
+                        console.warn(`[Diamond] Entry ${normalizedEntry.id} has no description, skipping`);
                         return null;
                     }
                     
                     if (isNaN(normalizedEntry.amount) || normalizedEntry.amount < 0) {
-                        console.warn(`Entry ${normalizedEntry.id} has invalid amount, skipping`);
+                        console.warn(`[Diamond] Entry ${normalizedEntry.id} has invalid amount, skipping`);
                         return null;
                     }
                     
                     return normalizedEntry;
                 } catch (err) {
-                    console.error(`Error normalizing entry at index ${index}:`, err);
+                    console.error(`[Diamond] Error normalizing entry at index ${index}:`, err);
                     return null;
                 }
             }).filter(entry => entry !== null); // Remove invalid entries
             
-            console.log(`Loaded ${normalized.length} Diamond entries (${parsed.length - normalized.length} invalid entries removed)`);
+            console.log(`[Diamond] Loaded ${normalized.length} valid entries (${parsed.length - normalized.length} invalid entries removed)`);
             return normalized;
+        } else {
+            console.log(`[Diamond] File does not exist, creating empty file...`);
+            // Create empty array file if it doesn't exist
+            try {
+                fs.writeFileSync(DIAMOND_FILE, '[]', { mode: 0o666 }); // Set permissions
+                console.log(`[Diamond] Created empty file at: ${DIAMOND_FILE}`);
+            } catch (writeError) {
+                console.error(`[Diamond] Error creating file:`, writeError.message);
+                console.error(`[Diamond] File path: ${DIAMOND_FILE}`);
+                throw new Error(`Cannot create Diamond data file: ${writeError.message}`);
+            }
+            return [];
         }
     } catch (error) {
-        console.error('Error loading diamond data:', error);
+        console.error('[Diamond] Error loading diamond data:', error);
+        console.error('[Diamond] Error stack:', error.stack);
+        // Return empty array instead of crashing
+        return [];
     }
-    // Create empty array file if it doesn't exist
-    fs.writeFileSync(DIAMOND_FILE, '[]');
-    return [];
 }
 
 function saveDiamondData(data) {
     try {
         // Ensure data is an array
         if (!Array.isArray(data)) {
-            console.error('Diamond data is not an array!');
+            console.error('[Diamond] Data is not an array!');
             throw new Error('Data must be an array');
         }
-        fs.writeFileSync(DIAMOND_FILE, JSON.stringify(data, null, 2));
-        console.log(`Saved ${data.length} Diamond entries`);
+        
+        console.log(`[Diamond] Saving ${data.length} entries to: ${DIAMOND_FILE}`);
+        
+        // Check if directory exists, create if not
+        const dir = path.dirname(DIAMOND_FILE);
+        if (!fs.existsSync(dir)) {
+            console.log(`[Diamond] Creating directory: ${dir}`);
+            fs.mkdirSync(dir, { recursive: true, mode: 0o755 });
+        }
+        
+        // Check write permissions
+        try {
+            if (fs.existsSync(DIAMOND_FILE)) {
+                fs.accessSync(DIAMOND_FILE, fs.constants.W_OK);
+                console.log(`[Diamond] File is writable`);
+            }
+        } catch (permError) {
+            console.error(`[Diamond] File permission error:`, permError.message);
+            throw new Error(`Cannot write to Diamond data file: ${permError.message}`);
+        }
+        
+        // Write file with proper error handling
+        const jsonData = JSON.stringify(data, null, 2);
+        fs.writeFileSync(DIAMOND_FILE, jsonData, { mode: 0o666, flag: 'w' });
+        
+        console.log(`[Diamond] Successfully saved ${data.length} entries`);
+        
+        // Verify the write
+        if (fs.existsSync(DIAMOND_FILE)) {
+            const verifyData = fs.readFileSync(DIAMOND_FILE, 'utf8');
+            const verifyParsed = JSON.parse(verifyData);
+            if (verifyParsed.length === data.length) {
+                console.log(`[Diamond] Write verified: ${verifyParsed.length} entries confirmed`);
+            } else {
+                console.warn(`[Diamond] Write verification failed: expected ${data.length}, got ${verifyParsed.length}`);
+            }
+        }
     } catch (error) {
-        console.error('Error saving diamond data:', error);
-        throw new Error('Failed to save data');
+        console.error('[Diamond] Error saving diamond data:', error);
+        console.error('[Diamond] Error stack:', error.stack);
+        console.error('[Diamond] File path:', DIAMOND_FILE);
+        throw new Error(`Failed to save data: ${error.message}`);
     }
 }
 
 app.get('/api/finance', (req, res) => {
     try {
+        console.log(`[API] GET /api/finance - Request received`);
         const data = loadDiamondData();
-        console.log(`GET /api/finance: Returning ${data.length} entries`);
+        console.log(`[API] GET /api/finance: Returning ${data.length} entries`);
+        
+        if (!Array.isArray(data)) {
+            console.error('[API] GET /api/finance: Data is not an array!');
+            return res.status(500).json({ error: 'Invalid data format', data: [] });
+        }
+        
         res.json(data);
     } catch (error) {
-        console.error('Error in GET /api/finance:', error);
-        res.status(500).json({ error: 'Failed to load data', details: error.message });
+        console.error('[API] Error in GET /api/finance:', error);
+        console.error('[API] Error stack:', error.stack);
+        res.status(500).json({ error: 'Failed to load data', details: error.message, data: [] });
     }
 });
 
@@ -182,12 +265,26 @@ app.post('/api/finance', validateInput, (req, res) => {
         }
         
         d.push(entry);
+        
+        console.log(`[API] POST /api/finance: Attempting to save entry with id ${entry.id}`);
+        console.log(`[API] Total entries before save: ${d.length}`);
+        
         saveDiamondData(d);
         
-        console.log(`POST /api/finance: Saved entry with id ${entry.id}`);
+        // Verify the save by reloading
+        const verifyData = loadDiamondData();
+        const savedEntry = verifyData.find(e => e.id === entry.id);
+        
+        if (savedEntry) {
+            console.log(`[API] POST /api/finance: Entry ${entry.id} verified in database`);
+        } else {
+            console.warn(`[API] POST /api/finance: Entry ${entry.id} not found after save!`);
+        }
+        
+        console.log(`[API] POST /api/finance: Saved entry with id ${entry.id}`);
         
         io.emit('data_update', entry);
-        res.json({ success: true, entryId: entry.id });
+        res.json({ success: true, entryId: entry.id, totalEntries: verifyData.length });
     } catch (error) {
         console.error('Error in POST /api/finance:', error);
         res.status(500).json({ error: 'Failed to save data', details: error.message });
@@ -1671,10 +1768,55 @@ app.get('/api/textile/stats', (req, res) => {
 });
 
 
+// Health check endpoint for AWS/load balancers
+app.get('/health', (req, res) => {
+    try {
+        // Check if data files are accessible
+        const diamondExists = fs.existsSync(DIAMOND_FILE);
+        const textileExists = fs.existsSync(TEXTILE_FILE);
+        const saasExists = fs.existsSync(SAAS_FILE);
+        
+        const health = {
+            status: 'ok',
+            timestamp: new Date().toISOString(),
+            environment: process.env.NODE_ENV || 'development',
+            workingDirectory: process.cwd(),
+            files: {
+                diamond: diamondExists,
+                textile: textileExists,
+                saas: saasExists
+            },
+            diamondFile: DIAMOND_FILE,
+            diamondDataCount: diamondExists ? loadDiamondData().length : 0
+        };
+        
+        res.json(health);
+    } catch (error) {
+        res.status(500).json({ 
+            status: 'error', 
+            error: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
+// Initialize Diamond data on startup
+console.log('🔧 Initializing Diamond Business...');
+try {
+    const initialData = loadDiamondData();
+    console.log(`✅ Diamond Business initialized with ${initialData.length} entries`);
+} catch (error) {
+    console.error('❌ Diamond Business initialization failed:', error);
+}
+
 server.listen(port, '0.0.0.0', () => {
     console.log(`✅ MULTI-BUSINESS SYSTEM RUNNING on port ${port}`);
     console.log(`   💎 Diamond Business: /api/finance`);
     console.log(`   🧵 Textile Business: /api/textile/*`);
     console.log(`   💼 SaaS Business: /api/saas/*`);
+    console.log(`   🏥 Health Check: /health`);
     console.log(`   🌐 Web Interface: http://localhost:${port}`);
+    console.log(`   📁 Working Directory: ${process.cwd()}`);
+    console.log(`   📁 Diamond File: ${DIAMOND_FILE}`);
+    console.log(`   🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
