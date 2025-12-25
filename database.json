@@ -1,29 +1,38 @@
 [
   {
     "id": 1764579377607,
-    "date": "2025-12-01T08:56:17.607Z",
-    "type": "expense",
+    "type": "debit",
+    "expenseType": "Expense",
     "category": "Ops",
+    "description": "Domain Purchase AMORE.in",
     "amount": 549,
-    "desc": "Domain Purchase AMORE.in",
-    "status": "Completed"
+    "status": "Completed",
+    "business_id": "biz_diamond",
+    "date": "2025-12-01T08:56:17.607Z",
+    "createdAt": "2025-12-01T08:56:17.607Z"
   },
   {
     "id": 1764579413134,
-    "date": "2025-12-01T08:56:53.134Z",
-    "type": "expense",
+    "type": "debit",
+    "expenseType": "Expense",
     "category": "Ops",
+    "description": "Domain Purchase AMORE.com",
     "amount": 766.44,
-    "desc": "Domain Purchase AMORE.com",
-    "status": "Completed"
+    "status": "Completed",
+    "business_id": "biz_diamond",
+    "date": "2025-12-01T08:56:53.134Z",
+    "createdAt": "2025-12-01T08:56:53.134Z"
   },
   {
     "id": 1764579443236,
-    "date": "2025-12-01T08:57:23.236Z",
-    "type": "expense",
+    "type": "debit",
+    "expenseType": "Expense",
     "category": "Ops",
+    "description": "ShopifyDEC",
     "amount": 10,
-    "desc": "ShopifyDEC",
-    "status": "Completed"
+    "status": "Completed",
+    "business_id": "biz_diamond",
+    "date": "2025-12-01T08:57:23.236Z",
+    "createdAt": "2025-12-01T08:57:23.236Z"
   }
 ]

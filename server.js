@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const { Server } = require("socket.io");
+const { prisma, validateData, sanitizeString } = require('./lib/database');
 
 const app = express();
 const server = http.createServer(app);
@@ -13,7 +14,7 @@ const port = 3005;
 
 
 
-// --- FILE PATHS ---
+// --- FILE PATHS (LEGACY - FOR TEXTILE AND SAAS) ---
 const DIAMOND_FILE = path.join(__dirname, 'database.json');
 const TEXTILE_FILE = path.join(__dirname, 'textile_data.json');
 const SAAS_FILE = path.join(__dirname, 'saas_data.json');
@@ -56,23 +57,73 @@ app.get('/', (req, res) => {
 });
 
 
-// --- DIAMOND LOGIC (SECURED) ---
+// --- DIAMOND LOGIC (JSON - TEMPORARY) ---
 function loadDiamondData() {
     try {
         if (fs.existsSync(DIAMOND_FILE)) {
             const data = fs.readFileSync(DIAMOND_FILE, 'utf8');
-            return JSON.parse(data);
+            const parsed = JSON.parse(data);
+            // Ensure it's always an array
+            if (!Array.isArray(parsed)) {
+                console.warn('Diamond data is not an array, converting...');
+                return [];
+            }
+            
+            // Normalize and validate all entries
+            const normalized = parsed.map((entry, index) => {
+                try {
+                    // Ensure all required fields exist
+                    const normalizedEntry = {
+                        id: entry.id || Date.now() + index,
+                        type: entry.type || (entry.expenseType === 'Income' ? 'credit' : 'debit'),
+                        expenseType: entry.expenseType || (entry.type === 'credit' ? 'Income' : 'Expense'),
+                        category: entry.category || 'Uncategorized',
+                        description: entry.description || entry.desc || '',
+                        amount: parseFloat(entry.amount) || 0,
+                        status: entry.status || 'Completed',
+                        business_id: entry.business_id || 'biz_diamond',
+                        date: entry.date || entry.createdAt || new Date().toISOString(),
+                        createdAt: entry.createdAt || entry.date || new Date().toISOString()
+                    };
+                    
+                    // Validate entry
+                    if (!normalizedEntry.description || normalizedEntry.description.trim() === '') {
+                        console.warn(`Entry ${normalizedEntry.id} has no description, skipping`);
+                        return null;
+                    }
+                    
+                    if (isNaN(normalizedEntry.amount) || normalizedEntry.amount < 0) {
+                        console.warn(`Entry ${normalizedEntry.id} has invalid amount, skipping`);
+                        return null;
+                    }
+                    
+                    return normalizedEntry;
+                } catch (err) {
+                    console.error(`Error normalizing entry at index ${index}:`, err);
+                    return null;
+                }
+            }).filter(entry => entry !== null); // Remove invalid entries
+            
+            console.log(`Loaded ${normalized.length} Diamond entries (${parsed.length - normalized.length} invalid entries removed)`);
+            return normalized;
         }
     } catch (error) {
         console.error('Error loading diamond data:', error);
     }
+    // Create empty array file if it doesn't exist
     fs.writeFileSync(DIAMOND_FILE, '[]');
     return [];
 }
 
 function saveDiamondData(data) {
     try {
+        // Ensure data is an array
+        if (!Array.isArray(data)) {
+            console.error('Diamond data is not an array!');
+            throw new Error('Data must be an array');
+        }
         fs.writeFileSync(DIAMOND_FILE, JSON.stringify(data, null, 2));
+        console.log(`Saved ${data.length} Diamond entries`);
     } catch (error) {
         console.error('Error saving diamond data:', error);
         throw new Error('Failed to save data');
@@ -81,27 +132,90 @@ function saveDiamondData(data) {
 
 app.get('/api/finance', (req, res) => {
     try {
-        res.json(loadDiamondData());
+        const data = loadDiamondData();
+        console.log(`GET /api/finance: Returning ${data.length} entries`);
+        res.json(data);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to load data' });
+        console.error('Error in GET /api/finance:', error);
+        res.status(500).json({ error: 'Failed to load data', details: error.message });
     }
 });
 
 app.post('/api/finance', validateInput, (req, res) => {
     try {
         const d = loadDiamondData();
-        const entry = { 
-            id: Date.now(), 
-            ...req.body, 
+        
+        // Validate required fields
+        if (!req.body.amount || parseFloat(req.body.amount) <= 0) {
+            return res.status(400).json({ error: 'Amount is required and must be positive' });
+        }
+        
+        if (!req.body.description && !req.body.desc) {
+            return res.status(400).json({ error: 'Description is required' });
+        }
+        
+        // Normalize data structure - ensure consistent format
+        const entryId = Date.now();
+        const entryType = req.body.type || (req.body.expenseType === 'Income' ? 'credit' : 'debit');
+        const expenseType = req.body.expenseType || (req.body.type === 'credit' ? 'Income' : 'Expense');
+        
+        const entry = {
+            id: entryId,
+            type: entryType, // 'credit' or 'debit'
+            expenseType: expenseType, // 'Income' or 'Expense'
+            category: (req.body.category || 'Uncategorized').trim().substring(0, 100),
+            description: (req.body.description || req.body.desc || '').trim().substring(0, 1000),
+            amount: parseFloat(req.body.amount),
             status: req.body.status || 'Completed',
+            business_id: req.body.business_id || 'biz_diamond',
+            date: req.body.date || new Date().toISOString(),
             createdAt: new Date().toISOString()
         };
+        
+        // Validate final entry
+        if (!entry.description || entry.description.trim() === '') {
+            return res.status(400).json({ error: 'Description cannot be empty' });
+        }
+        
+        if (isNaN(entry.amount) || entry.amount <= 0) {
+            return res.status(400).json({ error: 'Amount must be a positive number' });
+        }
+        
         d.push(entry);
         saveDiamondData(d);
+        
+        console.log(`POST /api/finance: Saved entry with id ${entry.id}`);
+        
         io.emit('data_update', entry);
-        res.json({ success: true });
+        res.json({ success: true, entryId: entry.id });
     } catch (error) {
-        res.status(500).json({ error: 'Failed to save data' });
+        console.error('Error in POST /api/finance:', error);
+        res.status(500).json({ error: 'Failed to save data', details: error.message });
+    }
+});
+
+// DELETE DIAMOND ENTRY
+app.delete('/api/finance/:id', validateInput, (req, res) => {
+    try {
+        const d = loadDiamondData();
+        const entryId = parseInt(req.params.id);
+        
+        const entryIndex = d.findIndex(e => e.id === entryId);
+        if (entryIndex === -1) {
+            return res.status(404).json({ error: 'Entry not found' });
+        }
+        
+        const deletedEntry = d[entryIndex];
+        d.splice(entryIndex, 1);
+        saveDiamondData(d);
+        
+        console.log(`DELETE /api/finance/${entryId}: Deleted entry`);
+        
+        io.emit('data_delete', { id: entryId });
+        res.json({ success: true, deleted: deletedEntry });
+    } catch (error) {
+        console.error('Error in DELETE /api/finance:', error);
+        res.status(500).json({ error: 'Failed to delete entry', details: error.message });
     }
 });
 
@@ -1125,12 +1239,18 @@ function saveTextileDB(data) {
     const updatedData = {
         ...existingData,
         ...data,
-        // Ensure existing arrays are preserved
-        greyStock: data.greyStock || existingData.greyStock || [],
-        millProcess: data.millProcess || existingData.millProcess || [],
-        readyStock: data.readyStock || existingData.readyStock || [],
-        vendors: data.vendors || existingData.vendors || [],
-        sales: data.sales || existingData.sales || []
+        // Ensure existing arrays are preserved - use data if it exists and is an array, otherwise use existing
+        bills: Array.isArray(data.bills) ? data.bills : (existingData.bills || []),
+        sales: Array.isArray(data.sales) ? data.sales : (existingData.sales || []),
+        expenses: Array.isArray(data.expenses) ? data.expenses : (existingData.expenses || []),
+        stock: Array.isArray(data.stock) ? data.stock : (existingData.stock || []),
+        greyStock: Array.isArray(data.greyStock) ? data.greyStock : (existingData.greyStock || []),
+        millProcess: Array.isArray(data.millProcess) ? data.millProcess : (existingData.millProcess || []),
+        readyStock: Array.isArray(data.readyStock) ? data.readyStock : (existingData.readyStock || []),
+        vendors: Array.isArray(data.vendors) ? data.vendors : (existingData.vendors || []),
+        // Preserve other fields
+        itemHistory: data.itemHistory || existingData.itemHistory || {},
+        cashInHand: data.cashInHand !== undefined ? data.cashInHand : existingData.cashInHand
     };
     fs.writeFileSync(TEXTILE_FILE, JSON.stringify(updatedData, null, 2)); 
 }

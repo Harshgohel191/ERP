@@ -1,137 +1,6 @@
 {
   "leads": [
     {
-      "id": 1766464544709,
-      "name": "Harsh",
-      "email": "harshgohel191@gmail.com",
-      "phone": "09924574964",
-      "company": "Vibhu Enterprise",
-      "source": "Social Media",
-      "service": "Web Development",
-      "notes": "",
-      "score": 50,
-      "status": "Negotiation",
-      "assignedTo": null,
-      "createdAt": "2025-12-23T04:35:44.709Z",
-      "lastContact": "2025-12-23T17:33:34.875Z",
-      "nextFollowUp": null,
-      "convertedTo": 1766464568648,
-      "activities": [
-        {
-          "id": 1766482057871,
-          "type": "call",
-          "description": "Phone call madee",
-          "notes": "",
-          "outcome": "",
-          "date": "2025-12-23T09:27:37.871Z",
-          "user": "Current User",
-          "timestamp": "2025-12-23T09:27:37.871Z"
-        },
-        {
-          "id": 1766482071649,
-          "type": "note",
-          "description": "50000",
-          "notes": "",
-          "outcome": "",
-          "date": "2025-12-23T09:27:51.649Z",
-          "user": "Current User",
-          "timestamp": "2025-12-23T09:27:51.649Z"
-        },
-        {
-          "id": 1766511097374,
-          "type": "status_change",
-          "description": "Status changed from Converted to Qualified",
-          "notes": "",
-          "date": "2025-12-23T17:31:37.374Z",
-          "user": "Current User",
-          "timestamp": "2025-12-23T17:31:37.374Z"
-        },
-        {
-          "id": 1766511214875,
-          "type": "status_change",
-          "description": "Status changed from Qualified to Negotiation",
-          "notes": "no",
-          "date": "2025-12-23T17:33:34.875Z",
-          "user": "Current User",
-          "timestamp": "2025-12-23T17:33:34.875Z"
-        },
-        {
-          "id": 1766511214876,
-          "type": "note",
-          "description": "no",
-          "date": "2025-12-23T17:33:34.875Z",
-          "user": "Current User",
-          "timestamp": "2025-12-23T17:33:34.875Z"
-        }
-      ],
-      "conversationHistory": [
-        {
-          "type": "call",
-          "content": "Phone call madee",
-          "date": "2025-12-23T09:27:37.871Z",
-          "summary": "No outcome recorded"
-        },
-        {
-          "type": "note",
-          "content": "50000",
-          "date": "2025-12-23T09:27:51.649Z",
-          "summary": "No outcome recorded"
-        }
-      ],
-      "priority": "Medium"
-    },
-    {
-      "id": 1766465427933,
-      "name": "Gohel Harsh",
-      "email": "harshgohel1m@gmail.com",
-      "phone": "09924574964",
-      "company": "Vibhu Enterprise",
-      "source": "Website",
-      "service": "Web Development",
-      "notes": "",
-      "score": 50,
-      "status": "Converted",
-      "assignedTo": null,
-      "createdAt": "2025-12-23T04:50:27.933Z",
-      "lastContact": "2025-12-23T04:50:27.933Z",
-      "nextFollowUp": null,
-      "convertedTo": 1766511251573
-    },
-    {
-      "id": 1766481808785,
-      "name": "Gohel Harsh",
-      "email": "harshgohel1m@gmail.com",
-      "phone": "09924574964",
-      "company": "Vibhu Enterprise",
-      "source": "Website",
-      "service": "Web Development",
-      "notes": "h",
-      "score": 50,
-      "status": "New",
-      "assignedTo": null,
-      "createdAt": "2025-12-23T09:23:28.785Z",
-      "lastContact": "2025-12-23T09:23:28.785Z",
-      "nextFollowUp": null
-    },
-    {
-      "id": 1766543569008,
-      "name": "Test Lead",
-      "email": "test@example.com",
-      "phone": "",
-      "company": "TestCorp",
-      "source": "API Test",
-      "service": "Testing",
-      "notes": "",
-      "score": 75,
-      "status": "New",
-      "assignedTo": null,
-      "createdAt": "2025-12-24T02:32:49.008Z",
-      "lastContact": "2025-12-24T02:32:49.008Z",
-      "nextFollowUp": null,
-      "activities": [],
-      "conversationHistory": []
-    },
-    {
       "id": 1766545559299,
       "name": "Test Lead",
       "email": "test@example.com",
@@ -148,86 +17,39 @@
       "nextFollowUp": null,
       "activities": [],
       "conversationHistory": []
+    },
+    {
+      "id": 1766667789849,
+      "name": "Test Lead",
+      "email": "test@example.com",
+      "phone": "1234567890",
+      "company": "Test Company",
+      "source": "Website",
+      "service": "SaaS Product",
+      "notes": "Test lead entry",
+      "score": 75,
+      "status": "New",
+      "assignedTo": null,
+      "createdAt": "2025-12-25T13:03:09.849Z",
+      "lastContact": "2025-12-25T13:03:09.849Z",
+      "nextFollowUp": null,
+      "activities": [],
+      "conversationHistory": []
     }
   ],
   "deals": [
     {
-      "id": 1766511251573,
-      "leadId": 1766465427933,
-      "clientName": "Gohel Harsh",
-      "clientEmail": "harshgohel1m@gmail.com",
-      "company": "Vibhu Enterprise",
-      "value": 700000,
-      "service": "General Service",
-      "stage": "Closed Lost",
-      "probability": 10,
-      "expectedCloseDate": "2026-01-22",
-      "notes": "Converted from lead",
-      "createdAt": "2025-12-23T17:34:11.573Z",
-      "activities": [
-        {
-          "type": "Stage Change",
-          "from": "Prospecting",
-          "to": "Qualified",
-          "date": "2025-12-23T17:37:42.586Z",
-          "notes": ""
-        },
-        {
-          "type": "Stage Change",
-          "from": "Qualified",
-          "to": "Closed Won",
-          "date": "2025-12-23T17:37:46.942Z",
-          "notes": ""
-        },
-        {
-          "type": "Stage Change",
-          "from": "Closed Won",
-          "to": "Closed Lost",
-          "date": "2025-12-23T17:38:02.141Z",
-          "notes": ""
-        }
-      ]
-    },
-    {
-      "id": 1766511428908,
-      "clientName": "hej",
-      "clientEmail": "wkjh@gmail.dfk",
-      "company": "rkwj",
-      "value": 100000,
-      "service": "Web Development",
-      "stage": "Proposal",
-      "probability": 80,
-      "expectedCloseDate": "2025-12-23",
-      "notes": "kjdk",
-      "createdAt": "2025-12-23T17:37:08.908Z",
-      "activities": []
-    },
-    {
-      "id": 1766543569049,
+      "id": 1766667791070,
       "clientName": "Test Client",
-      "clientEmail": "",
-      "company": "TestCorp",
-      "value": 25000,
-      "service": "API Testing",
-      "stage": "Proposal",
-      "probability": 60,
-      "expectedCloseDate": "2026-01-23",
-      "notes": "",
-      "createdAt": "2025-12-24T02:32:49.049Z",
-      "activities": []
-    },
-    {
-      "id": 1766545559327,
-      "clientName": "Test Client",
-      "clientEmail": "",
-      "company": "TestCorp",
-      "value": 25000,
-      "service": "API Testing",
-      "stage": "Proposal",
-      "probability": 60,
-      "expectedCloseDate": "2026-01-23",
-      "notes": "",
-      "createdAt": "2025-12-24T03:05:59.327Z",
+      "clientEmail": "client@example.com",
+      "company": "Test Corp",
+      "value": 50000,
+      "service": "Enterprise Plan",
+      "stage": "Prospecting",
+      "probability": 25,
+      "expectedCloseDate": "2025-02-15",
+      "notes": "Test deal",
+      "createdAt": "2025-12-25T13:03:11.070Z",
       "activities": []
     }
   ],
@@ -429,6 +251,16 @@
       "date": "2025-12-24",
       "notes": "",
       "createdAt": "2025-12-24T03:05:59.358Z"
+    },
+    {
+      "id": 1766667803305,
+      "amount": 10000,
+      "source": "Subscription",
+      "clientName": "Test Client",
+      "service": "SaaS Product",
+      "date": "2025-01-15",
+      "notes": "Test revenue",
+      "createdAt": "2025-12-25T13:03:23.305Z"
     }
   ],
   "expenses": [],

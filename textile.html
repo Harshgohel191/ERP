@@ -374,15 +374,34 @@
                 totalAmount
             };
 
-            await fetch('/api/textile/sale/save', { 
-                method:'POST', 
-                headers:{'Content-Type':'application/json'}, 
-                body: JSON.stringify(body)
-            });
-            
-
-            alert("✅ Sale saved successfully!");
-            switchTab('ledger'); // Auto switch to ledger
+            try {
+                const response = await fetch('/api/textile/sale/save', { 
+                    method:'POST', 
+                    headers:{'Content-Type':'application/json'}, 
+                    body: JSON.stringify(body)
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to save sale');
+                }
+                
+                alert("✅ Sale saved successfully!");
+                // Clear form
+                document.getElementById('sCustomer').value = '';
+                document.getElementById('sInvoiceNo').value = '';
+                document.getElementById('sDate').value = '';
+                document.querySelectorAll('#saleItemTable tbody tr').forEach(r => r.remove());
+                document.getElementById('saleSubtotal').innerText = '0';
+                document.getElementById('saleGrandTotal').innerText = '0';
+                
+                // Reload data
+                await loadData();
+                switchTab('ledger'); // Auto switch to ledger
+            } catch (error) {
+                console.error('Error saving sale:', error);
+                alert('❌ Error: ' + error.message);
+            }
         }
 
         // --- EXPENSE FUNCTIONS ---
@@ -411,21 +430,35 @@
                 mode
             };
 
-            await fetch('/api/textile/expense/save', { 
-                method:'POST', 
-                headers:{'Content-Type':'application/json'}, 
-                body: JSON.stringify(body)
-            });
-            
-            alert("✅ Expense saved successfully!");
-            
-            // Clear form
-            document.getElementById('eCategory').value = '';
-            document.getElementById('eDescription').value = '';
-            document.getElementById('eAmount').value = '';
-            document.getElementById('eTotal').innerText = '0';
-            
-            switchTab('ledger'); // Auto switch to ledger
+            try {
+                const response = await fetch('/api/textile/expense/save', { 
+                    method:'POST', 
+                    headers:{'Content-Type':'application/json'}, 
+                    body: JSON.stringify(body)
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to save expense');
+                }
+                
+                alert("✅ Expense saved successfully!");
+                
+                // Clear form
+                document.getElementById('eCategory').value = '';
+                document.getElementById('eDescription').value = '';
+                document.getElementById('eAmount').value = '';
+                document.getElementById('eDate').value = '';
+                document.getElementById('eMode').value = 'Cash';
+                document.getElementById('eTotal').innerText = '0';
+                
+                // Reload data
+                await loadData();
+                switchTab('ledger'); // Auto switch to ledger
+            } catch (error) {
+                console.error('Error saving expense:', error);
+                alert('❌ Error: ' + error.message);
+            }
         }
 
 
@@ -465,17 +498,28 @@
                 // Load complete data
                 const data = await (await fetch('/api/textile/data')).json();
                 
+                // Debug logging
+                console.log('Loaded data:', {
+                    bills: data.bills?.length || 0,
+                    sales: data.sales?.length || 0,
+                    expenses: data.expenses?.length || 0
+                });
+                
                 // Load Purchase Ledger
-                loadPurchaseLedger(data.bills || []);
+                loadPurchaseLedger(Array.isArray(data.bills) ? data.bills : []);
                 
                 // Load Sales Ledger
-                loadSalesLedger(data.sales || []);
+                loadSalesLedger(Array.isArray(data.sales) ? data.sales : []);
                 
                 // Load Expense Ledger
-                loadExpenseLedger(data.expenses || []);
+                loadExpenseLedger(Array.isArray(data.expenses) ? data.expenses : []);
                 
                 // Load All Entries
-                loadAllEntries(data.bills || [], data.sales || [], data.expenses || []);
+                loadAllEntries(
+                    Array.isArray(data.bills) ? data.bills : [],
+                    Array.isArray(data.sales) ? data.sales : [],
+                    Array.isArray(data.expenses) ? data.expenses : []
+                );
                 
             } catch (err) { console.error(err); }
         }
@@ -489,7 +533,12 @@
                 return;
             }
 
-            bills.sort((a,b) => new Date(b.id) - new Date(a.id)).forEach(b => {
+            bills.sort((a,b) => {
+                // Sort by billDate first, then by id as fallback
+                const dateA = new Date(a.billDate || a.createdAt || a.id);
+                const dateB = new Date(b.billDate || b.createdAt || b.id);
+                return dateB - dateA;
+            }).forEach(b => {
                 const date = new Date(b.billDate).toLocaleDateString();
                 
                 let itemsHtml = '';
@@ -528,7 +577,12 @@
                 return;
             }
 
-            sales.sort((a,b) => new Date(b.id) - new Date(a.id)).forEach(s => {
+            sales.sort((a,b) => {
+                // Sort by saleDate first, then by id as fallback
+                const dateA = new Date(a.saleDate || a.date || a.id);
+                const dateB = new Date(b.saleDate || b.date || b.id);
+                return dateB - dateA;
+            }).forEach(s => {
                 const date = new Date(s.saleDate).toLocaleDateString();
                 
                 let itemsHtml = '';
@@ -570,7 +624,12 @@
                 return;
             }
 
-            expenses.sort((a,b) => new Date(b.id) - new Date(a.id)).forEach(e => {
+            expenses.sort((a,b) => {
+                // Sort by date first, then by id as fallback
+                const dateA = new Date(a.date || a.dateCreated || a.id);
+                const dateB = new Date(b.date || b.dateCreated || b.id);
+                return dateB - dateA;
+            }).forEach(e => {
                 const date = new Date(e.date).toLocaleDateString();
 
                 tbody.innerHTML += `
@@ -799,9 +858,35 @@
                 totalAmount
             };
 
-            await fetch('/api/textile/purchase/save', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
-            alert("✅ Saved!");
-            switchTab('ledger'); // Auto switch
+            try {
+                const response = await fetch('/api/textile/purchase/save', { 
+                    method:'POST', 
+                    headers:{'Content-Type':'application/json'}, 
+                    body:JSON.stringify(body)
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to save bill');
+                }
+                
+                alert("✅ Bill saved successfully!");
+                // Clear form
+                document.getElementById('pVendor').value = '';
+                document.getElementById('pBillNo').value = '';
+                document.getElementById('pDate').value = '';
+                document.getElementById('pCredit').value = '30';
+                document.querySelectorAll('#itemTable tbody tr').forEach(r => r.remove());
+                document.getElementById('purchaseSubtotal').innerText = '0';
+                document.getElementById('grandTotal').innerText = '0';
+                
+                // Reload data
+                await loadData();
+                switchTab('ledger'); // Auto switch to ledger
+            } catch (error) {
+                console.error('Error saving bill:', error);
+                alert('❌ Error: ' + error.message);
+            }
         }
 
         // --- PAYMENT ---

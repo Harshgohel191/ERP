@@ -1,14 +1,14 @@
 {
   "bills": [
     {
-      "id": 1766543739789,
+      "id": 1766667774718,
       "vendor": "Test Vendor",
       "billNo": "TEST001",
-      "billDate": "2025-12-20",
-      "dueDate": "2026-01-19T00:00:00.000Z",
+      "billDate": "2025-01-15",
+      "dueDate": "2025-02-14T00:00:00.000Z",
       "items": [
         {
-          "name": "Test Fabric",
+          "name": "Test Item",
           "qty": 10,
           "rate": 100,
           "total": 1000
@@ -24,33 +24,7 @@
       "balance": 1000,
       "status": "Unpaid",
       "payments": [],
-      "createdAt": "2025-12-24T02:35:39.789Z"
-    },
-    {
-      "id": 1766543739897,
-      "vendor": "scriptalert(1)/script",
-      "billNo": "TEST",
-      "billDate": "2025-12-20",
-      "dueDate": "2026-01-19T00:00:00.000Z",
-      "items": [
-        {
-          "name": "Test",
-          "qty": 1,
-          "rate": 100,
-          "total": 100
-        }
-      ],
-      "subtotal": 100,
-      "gstIncluded": false,
-      "gstRate": 0,
-      "gstAmount": 0,
-      "totalAmount": 100,
-      "paidAmount": 0,
-      "discountAmount": 0,
-      "balance": 100,
-      "status": "Unpaid",
-      "payments": [],
-      "createdAt": "2025-12-24T02:35:39.897Z"
+      "createdAt": "2025-12-25T13:02:54.718Z"
     }
   ],
   "itemHistory": {
@@ -64,7 +38,7 @@
     "t3": 627,
     "test fabric": 120,
     "t4": 922,
-    "test item": 100,
+    "test item": 150,
     "gohel": 424,
     "wrw": 334,
     "test": 100
@@ -227,7 +201,7 @@
       "id": 1766240014799.7441,
       "type": "Purchase",
       "name": "Test Item",
-      "qty": 50,
+      "qty": 45,
       "rate": 50,
       "vendor": "Test Vendor GST",
       "date": "2025-12-20T14:13:34.799Z"
@@ -267,41 +241,50 @@
       "rate": 100,
       "vendor": "scriptalert(1)/script",
       "date": "2025-12-24T02:35:39.897Z"
+    },
+    {
+      "id": 1766667774718.5935,
+      "type": "Purchase",
+      "name": "Test Item",
+      "qty": 10,
+      "rate": 100,
+      "vendor": "Test Vendor",
+      "date": "2025-12-25T13:02:54.718Z"
     }
   ],
-  "cashInHand": -268698,
+  "cashInHand": -264048,
   "expenses": [
     {
-      "id": 1766543739835,
-      "category": "Rent",
-      "description": "Monthly rent",
-      "amount": 5000,
-      "date": "2025-12-20",
+      "id": 1766667800221,
+      "category": "Office",
+      "description": "Test Expense",
+      "amount": 500,
+      "date": "2025-01-15",
       "mode": "Cash",
-      "dateCreated": "2025-12-24T02:35:39.835Z"
+      "dateCreated": "2025-12-25T13:03:20.221Z"
     }
   ],
   "sales": [
     {
-      "id": 1766543739804,
+      "id": 1766667776243,
       "customer": "Test Customer",
-      "invoiceNo": "INV001",
-      "saleDate": "2025-12-20",
+      "invoiceNo": "SALE001",
+      "saleDate": "2025-01-15",
       "items": [
         {
-          "name": "Test Fabric",
+          "name": "Test Item",
           "qty": 5,
-          "rate": 120,
-          "total": 600
+          "rate": 150,
+          "total": 750
         }
       ],
-      "subtotal": 600,
+      "subtotal": 750,
       "gstIncluded": false,
       "gstRate": 0,
       "gstAmount": 0,
-      "totalAmount": 600,
+      "totalAmount": 750,
       "paymentStatus": "Paid",
-      "date": "2025-12-24T02:35:39.804Z"
+      "date": "2025-12-25T13:02:56.243Z"
     }
   ],
   "greyStock": [
